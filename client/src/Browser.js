@@ -5,6 +5,7 @@ function Browser(props) {
 
     const sendToViewer = (hash) => {
         eventBus.emit('selectImage', all[hash]);
+        eventBus.emit('selectTabImage', all[hash]);
     }
 
     return (

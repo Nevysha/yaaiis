@@ -11,6 +11,7 @@ import './App.css';
 import Browser from "./Browser";
 import EventEmitter from "eventemitter3";
 import Viewer from "./Viewer";
+import ImgData from "./ImgData";
 
 
 function App() {
@@ -65,9 +66,13 @@ function App() {
                     </div>
                     <Browser all={all} eventBus={eventBus}/>
                 </SplitterPanel>
-                <SplitterPanel size={70} style={{display: 'flex', flexDirection:'column'}}>
+                <SplitterPanel size={50} style={{display: 'flex', flexDirection:'column'}}>
                     <h4>Viewer</h4>
                     <Viewer eventBus={eventBus}/>
+                </SplitterPanel>
+                <SplitterPanel size={20} style={{display: 'flex', flexDirection:'column'}}>
+                    <h4>info</h4>
+                    <ImgData eventBus={eventBus}/>
                 </SplitterPanel>
             </Splitter>
         </div>

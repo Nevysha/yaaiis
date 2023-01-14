@@ -5,6 +5,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import uniqid from "uniqid";
 import YaaiisTabHeader from "./YaaiisTabHeader";
+import ImgData from "./ImgData";
 
 
 function Browser(props) {
@@ -26,7 +27,6 @@ function Browser(props) {
             setSelectedImgs(newSelection);
             setActiveIndex(newSelection.length - 1);
         }
-
         setCheatRender(uniqid());
     });
 
@@ -56,6 +56,7 @@ function Browser(props) {
 
     const onTabChange = (e) => {
         setActiveIndex(e.index);
+        eventBus.emit('selectTabImage', selectedImgs[e.index]);
     }
 
 
@@ -69,8 +70,10 @@ function Browser(props) {
             const hash = imgData.hash;
             return (
                 <TabPanel header={getHeader(imgData)} key={hash}>
-                    <img style={{maxHeight: height, maxWidth: width}} src={`http://localhost:6969/img/${hash}`}
-                         alt={hash}/>
+                    <div>
+                        <img style={{maxHeight: height, maxWidth: width}} src={`http://localhost:6969/img/${hash}`}
+                             alt={hash}/>
+                    </div>
                 </TabPanel>
             )
         });
