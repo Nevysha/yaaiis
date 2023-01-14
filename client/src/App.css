@@ -53,3 +53,17 @@ h4 {
     color: white;
     border: none;
 }
+
+.tabShowHover {
+    height: 100px;
+    width: 100px;
+    position: fixed;
+    margin-top: 8px;
+    margin-left: -5px;
+    background-color: rgb(42 50 61);
+    border: 2px solid #c298d8;
+    text-align: center;
+}
+.tabShowHover img {
+    margin: auto;
+}

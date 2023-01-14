@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import uniqid from "uniqid";
+import YaaiisTabHeader from "./YaaiisTabHeader";
 
 
 function Browser(props) {
@@ -57,22 +58,17 @@ function Browser(props) {
         setActiveIndex(e.index);
     }
 
-    const getHeader = (hash) => {
-        return (
-            <div>
-                {hash.substring(0,8)}
-                <Button className="tabButtonClose" onClick={(e) => closeImg(hash,e)}>
-                    <FontAwesomeIcon icon={faXmark} />
-                </Button>
-            </div>
-        );
+
+
+    const getHeader = (imgData) => {
+        return (<YaaiisTabHeader closeImg={closeImg} imgData={imgData}/>)
     }
 
     function getTab() {
         return selectedImgs.map((imgData) => {
             const hash = imgData.hash;
             return (
-                <TabPanel header={getHeader(hash)} key={hash}>
+                <TabPanel header={getHeader(imgData)} key={hash}>
                     <img style={{maxHeight: height, maxWidth: width}} src={`http://localhost:6969/img/${hash}`}
                          alt={hash}/>
                 </TabPanel>
