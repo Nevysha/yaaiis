@@ -47,15 +47,13 @@ function Browser(props) {
         const index = selectedImgs.map((item) => {return item.hash}).indexOf(hash)
         newSelectedImg.splice(index,1);
         setSelectedImgs(newSelectedImg);
-        if (index < activeIndex) {
+        if (index <= activeIndex) {
             setActiveIndex(activeIndex-1);
         }
         setCheatRender(uniqid());
     }
 
     const onTabChange = (e) => {
-        console.log('onTabChange:');
-        console.log(e);
         setActiveIndex(e.index);
     }
 
@@ -71,7 +69,6 @@ function Browser(props) {
     }
 
     function getTab() {
-        console.log(selectedImgs);
         return selectedImgs.map((imgData) => {
             const hash = imgData.hash;
             return (
