@@ -74,3 +74,11 @@ h4 {
     background-color: #04040475;
 }
 
+.menubar-right {
+    display: flex;
+    flex-direction: row;
+}
+.menubar-right img {
+    margin-right: 10px;
+}
+

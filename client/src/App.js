@@ -12,6 +12,8 @@ import Browser from "./Browser";
 import EventEmitter from "eventemitter3";
 import Viewer from "./Viewer";
 import ImgData from "./ImgData";
+import { Menubar } from 'primereact/menubar';
+import { Button } from 'primereact/button';
 
 
 function App() {
@@ -51,19 +53,54 @@ function App() {
         load();
     }, []);
 
+    const items = [
+        {
+            label:'Filter',
+            icon:'pi pi-fw pi-pencil',
+            items:[
+                {
+                    label:'With metadata',
+                },
+                {
+                    label:'No upscale',
+                },
+                {
+                    label:'Model',
+                    items: [
+                        {label: 'ModelA'},
+                        {label: 'ModelB'}
+                    ]
+                },
+
+            ]
+        },
+        {
+            label:'Refresh',
+            icon:'pi pi-fw pi-refresh'
+        }
+    ];
+
     return (
         <div style={{height: '100vh'}}>
+
+            <Menubar
+                model={items}
+                start={
+                    <div className="menubar-right">
+                        <img src="./nevy-icon-1-256-round.png" width='40px'/>
+                        <div className="p-inputgroup">
+                                            <span className="p-inputgroup-addon">
+                                                <FontAwesomeIcon icon={faSearch}/>
+                                            </span>
+                            <InputText placeholder="Search"/>
+                        </div>
+                    </div>
+                }
+                end={<Button label="Help" icon="pi pi-question"/>}/>
+
             <Splitter style={{height: '100%'}}>
                 <SplitterPanel id='browserSplitterPanel' className="flex align-items-center justify-content-center" style={{display:'flex', flexDirection:'column'}} size={30} minSize={10}>
                     <h4>Browser</h4>
-                    <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <span className="p-inputgroup-addon">
-                                <FontAwesomeIcon icon={faSearch} />
-                            </span>
-                            <InputText placeholder="Search" />
-                        </div>
-                    </div>
                     <Browser all={all} eventBus={eventBus}/>
                 </SplitterPanel>
                 <SplitterPanel size={50} style={{display: 'flex', flexDirection:'column'}}>
