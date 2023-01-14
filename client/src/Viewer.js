@@ -14,7 +14,7 @@ function Browser(props) {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [selectedImgs, setSelectedImgs] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(props.activeIndex);
+    const [activeIndex, setActiveIndex] = useState(selectedImgs.length-1);
     const [cheatRender, setCheatRender] = useState(uniqid());
 
     eventBus.removeAllListeners('selectImage');
@@ -41,10 +41,16 @@ function Browser(props) {
 
     }, []);
 
-    const onTabClose = (e) => {
+    const closeImg = (hash, e) => {
+        e.stopPropagation();
         const newSelectedImg = selectedImgs;
-        newSelectedImg.splice(e.index,1);
+        const index = selectedImgs.map((item) => {return item.hash}).indexOf(hash)
+        newSelectedImg.splice(index,1);
         setSelectedImgs(newSelectedImg);
+        if (index < activeIndex) {
+            setActiveIndex(activeIndex-1);
+        }
+        setCheatRender(uniqid());
     }
 
     const onTabChange = (e) => {
@@ -57,9 +63,9 @@ function Browser(props) {
         return (
             <div>
                 {hash.substring(0,8)}
-                {/*<Button className="tabButtonClose" onClick={(e) => closeImg(hash,e)}>*/}
-                {/*    <FontAwesomeIcon icon={faXmark} />*/}
-                {/*</Button>*/}
+                <Button className="tabButtonClose" onClick={(e) => closeImg(hash,e)}>
+                    <FontAwesomeIcon icon={faXmark} />
+                </Button>
             </div>
         );
     }
@@ -69,7 +75,7 @@ function Browser(props) {
         return selectedImgs.map((imgData) => {
             const hash = imgData.hash;
             return (
-                <TabPanel header={getHeader(hash)} key={hash} closable>
+                <TabPanel header={getHeader(hash)} key={hash}>
                     <img style={{maxHeight: height, maxWidth: width}} src={`http://localhost:6969/img/${hash}`}
                          alt={hash}/>
                 </TabPanel>
@@ -80,7 +86,7 @@ function Browser(props) {
     return (
         <div style={{flex:1,height: '100%'}} ref={ref}>
             <span style={{display:"none"}}>{cheatRender}</span>
-            <TabView activeIndex={activeIndex} onTabClose={(e) => onTabClose(e)} onTabChange={(e) => onTabChange(e)}>
+            <TabView activeIndex={activeIndex} onTabChange={(e) => onTabChange(e)}>
                 {getTab()}
             </TabView>
         </div>
