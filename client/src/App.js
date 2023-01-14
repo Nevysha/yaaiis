@@ -11,7 +11,6 @@ import './App.css';
 import Browser from "./Browser";
 import EventEmitter from "eventemitter3";
 import Viewer from "./Viewer";
-import uniqid from 'uniqid';
 
 
 function App() {

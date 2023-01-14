@@ -32,8 +32,8 @@ function Browser(props) {
     useEffect(() => {
 
         const onResize = () => {
-            setHeight(ref.current.clientHeight - 100);
-            setWidth(ref.current.clientWidth - document.getElementById('browserSplitterPanel').offsetWidth - 10);
+            setHeight(ref.current.clientHeight);
+            setWidth(ref.current.clientWidth);
         }
         onResize();
 
