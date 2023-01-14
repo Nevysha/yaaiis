@@ -17,32 +17,10 @@ import uniqid from 'uniqid';
 function App() {
 
     const [value, setValue] = useState('');
-    const [cheatRender, setCheatRender] = useState(uniqid());
     const [all, setAll] = useState({});
-    const [selectedImgs, setSelectedImgs] = useState([]);
 
 
     const eventBus = new EventEmitter();
-    eventBus.on('selectImage', (imgData) => {
-        const newSelection = selectedImgs;
-        newSelection.push(imgData);
-        console.log(newSelection);
-        setSelectedImgs(newSelection);
-        setCheatRender(uniqid());
-    });
-
-    eventBus.on('closeImg', (hash) => {
-        closeImg(hash);
-        setCheatRender(uniqid());
-    });
-
-    const closeImg = (hash) => {
-
-        const newSelectedImg = selectedImgs.filter((imgData) => {
-            if (imgData.hash !== hash) return imgData;
-        });
-        setSelectedImgs(newSelectedImg);
-    }
 
     const load = async () => {
         const response = await fetch("http://localhost:6969/img/data/all");
@@ -67,7 +45,6 @@ function App() {
         })).blob();
         let blobJson = JSON.parse(await blob.text());
         setAll(blobJson);
-        console.log(blobJson);
     }
 
     useEffect(() => {
@@ -76,7 +53,6 @@ function App() {
 
     return (
         <div style={{height: '100vh'}}>
-            <span style={{display:"none"}}>{cheatRender}</span>
             <Splitter style={{height: '100%'}}>
                 <SplitterPanel id='browserSplitterPanel' className="flex align-items-center justify-content-center" style={{display:'flex', flexDirection:'column'}} size={30} minSize={10}>
                     <h4>Browser</h4>
@@ -92,7 +68,7 @@ function App() {
                 </SplitterPanel>
                 <SplitterPanel size={70} style={{display: 'flex', flexDirection:'column'}}>
                     <h4>Viewer</h4>
-                    <Viewer selectedImgs={selectedImgs} eventBus={eventBus}/>
+                    <Viewer eventBus={eventBus}/>
                 </SplitterPanel>
             </Splitter>
         </div>

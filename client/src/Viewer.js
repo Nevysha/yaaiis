@@ -3,6 +3,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import uniqid from "uniqid";
 
 
 function Browser(props) {
@@ -12,9 +13,21 @@ function Browser(props) {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [selectedImgs, setSelectedImgs] = useState(props.selectedImgs);
+    const [selectedImgs, setSelectedImgs] = useState([]);
     const [activeIndex, setActiveIndex] = useState(props.activeIndex);
-    const [selectedImageHash, setSelectedImageHash] = useState(activeIndex);
+    const [cheatRender, setCheatRender] = useState(uniqid());
+
+    eventBus.removeAllListeners('selectImage');
+    eventBus.on('selectImage',(imgData) => {
+        const newSelection = selectedImgs;
+        if (newSelection.map((item) => {return item.hash}).indexOf(imgData.hash) < 0) {
+            newSelection.push(imgData);
+            setSelectedImgs(newSelection);
+            setActiveIndex(newSelection.length - 1);
+        }
+
+        setCheatRender(uniqid());
+    });
 
     useEffect(() => {
 
@@ -27,43 +40,48 @@ function Browser(props) {
         window.addEventListener("resize", onResize);
 
     }, []);
-    useEffect(() => {
-        setSelectedImgs(props.selectedImgs);
-        setActiveIndex(props.activeIndex);
-    }, [props.selectedImgs, props.activeIndex]);
 
-    const selectImage = (index) => {
-        setActiveIndex(index);
-        setSelectedImageHash(selectedImgs[index].hash);
+    const onTabClose = (e) => {
+        const newSelectedImg = selectedImgs;
+        newSelectedImg.splice(e.index,1);
+        setSelectedImgs(newSelectedImg);
     }
 
-    const closeImg = (hash, e) => {
-        e.stopPropagation();
-        eventBus.emit('closeImg', hash);
+    const onTabChange = (e) => {
+        console.log('onTabChange:');
+        console.log(e);
+        setActiveIndex(e.index);
     }
 
     const getHeader = (hash) => {
         return (
             <div>
                 {hash.substring(0,8)}
-                <Button className="tabButtonClose" onClick={(e) => closeImg(hash,e)}>
-                    <FontAwesomeIcon icon={faXmark} />
-                </Button>
+                {/*<Button className="tabButtonClose" onClick={(e) => closeImg(hash,e)}>*/}
+                {/*    <FontAwesomeIcon icon={faXmark} />*/}
+                {/*</Button>*/}
             </div>
         );
     }
 
+    function getTab() {
+        console.log(selectedImgs);
+        return selectedImgs.map((imgData) => {
+            const hash = imgData.hash;
+            return (
+                <TabPanel header={getHeader(hash)} key={hash} closable>
+                    <img style={{maxHeight: height, maxWidth: width}} src={`http://localhost:6969/img/${hash}`}
+                         alt={hash}/>
+                </TabPanel>
+            )
+        });
+    }
+
     return (
         <div style={{flex:1,height: '100%'}} ref={ref}>
-            <TabView activeIndex={activeIndex} onTabChange={(e) => selectImage(e.index)}>
-                {selectedImgs.map((imgData) => {
-                    const hash = imgData.hash;
-                    return (
-                        <TabPanel header={getHeader(hash)} key={hash}>
-                            <img style={{maxHeight:height, maxWidth:width}} src={`http://localhost:6969/img/${hash}`} alt={hash}/>
-                        </TabPanel>
-                    )
-                })}
+            <span style={{display:"none"}}>{cheatRender}</span>
+            <TabView activeIndex={activeIndex} onTabClose={(e) => onTabClose(e)} onTabChange={(e) => onTabChange(e)}>
+                {getTab()}
             </TabView>
         </div>
     )
