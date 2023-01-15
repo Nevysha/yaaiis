@@ -20,7 +20,7 @@ import { Resizable } from 'react-resizable';
 
 function App() {
 
-    const [value, setValue] = useState('');
+    const [searchValue, setSearchValue] = useState('');
     const [all, setAll] = useState({});
     const [browserWidth, setBrowserWidth] = useState(440);
     const [infoWidth, setInfoWidth] = useState(500);
@@ -69,6 +69,26 @@ function App() {
         setViewerWidth(window.innerWidth - (infoWidth + browserWidth));
     }
 
+    const applySearch = () => {
+        if (searchValue === "") return all;
+
+        const filtered = {};
+        for (let hash of Object.keys(all)) {
+            const imgData = all[hash];
+
+            if (JSON.stringify(imgData.generationMetadata).includes(searchValue)) {
+                filtered[hash] = imgData;
+                continue;
+            }
+            if (JSON.stringify(imgData.paths).includes(searchValue)) {
+                filtered[hash] = imgData;
+                continue;
+            }
+
+        }
+        return filtered;
+    }
+
     const items = [
         {
             label:'Filter',
@@ -109,7 +129,7 @@ function App() {
                                             <span className="p-inputgroup-addon">
                                                 <FontAwesomeIcon icon={faSearch}/>
                                             </span>
-                            <InputText placeholder="Search"/>
+                            <InputText placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
                         </div>
                     </div>
                 }
@@ -124,7 +144,7 @@ function App() {
 
                     <div style={{width:browserWidth+"px", height:'100%'}}>
                         <h4>Browser</h4>
-                        <Browser all={all} eventBus={eventBus}/>
+                        <Browser all={applySearch()} eventBus={eventBus}/>
                     </div>
 
                 </Resizable>
