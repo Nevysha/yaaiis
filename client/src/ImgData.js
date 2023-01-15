@@ -26,7 +26,7 @@ function ImgData(props) {
                     return (<tr key={metadata.key}>
                         <td>
                             <div style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
-                                {metadata.key.replace('xmp:','').replace('dc:','')}
+                                {metadata.key}
                             </div>
                         </td>
                         <td>{metadata.val}</td>

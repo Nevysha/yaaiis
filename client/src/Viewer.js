@@ -1,11 +1,7 @@
 import {useRef,useEffect,useState} from "react";
 import { TabView, TabPanel } from 'primereact/tabview';
-import { Button } from 'primereact/button';
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import uniqid from "uniqid";
 import YaaiisTabHeader from "./YaaiisTabHeader";
-import ImgData from "./ImgData";
 
 
 function Browser(props) {
