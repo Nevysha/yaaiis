@@ -53,10 +53,9 @@ function _parse(fullPath, hash) {
 }
 const sanitizeKeyVal = (key, val) => {
     return {
-        key: key.replace(/[^\x00-\x7F]/g, ""),
-        val:val.replace(/[^\x00-\x7F]/g, "")
+        key: key.replace(/[^\x00-\x7F]/g, "").trim(),
+        val:val.replace(/[^\x00-\x7F]/g, "").trim()
     }
-
 }
 
 const scrap = async (folderPath) => {
