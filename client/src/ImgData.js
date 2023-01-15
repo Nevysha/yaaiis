@@ -22,6 +22,7 @@ function ImgData(props) {
         <div className="imgData">
             <span style={{display:"none"}}>{cheatRender}</span>
             <table>
+                <tbody>
                 {imgData.generationMetadata.map((metadata) => {
                     return (<tr key={metadata.key}>
                         <td>
@@ -32,6 +33,7 @@ function ImgData(props) {
                         <td>{metadata.val}</td>
                     </tr>)
                 })}
+                </tbody>
             </table>
 
         </div>

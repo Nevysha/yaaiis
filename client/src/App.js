@@ -59,10 +59,14 @@ function App() {
     }, []);
 
 
-    console.log(browserWidth)
-    const onFirstBoxResize = (event, {element, size, handle}) => {
-        console.log(size)
+    const onFirstResizeBrowser = (event, {element, size, handle}) => {
         setBrowserWidth(size.width);
+        setViewerWidth(window.innerWidth - (infoWidth + browserWidth));
+    }
+
+    const onFirstResizeInfo = (event, {element, size, handle}) => {
+        setInfoWidth(size.width);
+        setViewerWidth(window.innerWidth - (infoWidth + browserWidth));
     }
 
     const items = [
@@ -112,23 +116,38 @@ function App() {
                 end={<Button label="Help" icon="pi pi-question"/>}/>
 
             <div style={{height: '100%', display:'flex'}}>
-                <Resizable width={browserWidth} height={'100%'} id='browserSplitterPanel'
+
+                <Resizable width={browserWidth} id='browserSplitterPanel'
                         style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
                         resizeHandles={['e']}
-                        onResize={onFirstBoxResize}>
+                        onResize={onFirstResizeBrowser}>
 
                     <div style={{width:browserWidth+"px", height:'100%'}}>
                         <h4>Browser</h4>
                         <Browser all={all} eventBus={eventBus}/>
                     </div>
+
                 </Resizable>
+
                 <div style={{display: 'flex', flexDirection:'column', flex:1, height:"100%", maxWidth:viewerWidth+'px', padding:"0 5px 0 5px"}}>
                     <h4>Viewer</h4>
                     <Viewer eventBus={eventBus}/>
                 </div>
-                <div style={{display: 'flex', flexDirection:'column', width:"500px"}}>
-                    <h4>info</h4>
-                    <ImgData eventBus={eventBus}/>
+
+                <div style={{display: 'flex', flexDirection:'column'}}>
+
+                    <Resizable width={infoWidth} id='browserSplitterPanel'
+                               style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
+                               resizeHandles={['w']}
+                               onResize={onFirstResizeInfo}>
+
+                        <div style={{width:infoWidth+"px", height:'100%'}}>
+                            <h4>info</h4>
+                            <ImgData eventBus={eventBus}/>
+                        </div>
+
+                    </Resizable>
+
                 </div>
             </div>
         </div>
