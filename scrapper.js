@@ -46,6 +46,12 @@ function _parse(fullPath, hash) {
 
     for (let chunk of remainingRawChunks) {
         const keyVal = chunk.split(":");
+        if (keyVal[0].indexOf("Size") >= 0) {
+            let size = keyVal[1].split("x");
+            data.push(sanitizeKeyVal("width", size[0]));
+            data.push(sanitizeKeyVal("height", size[1]));
+            continue;
+        }
         data.push(sanitizeKeyVal(keyVal[0], keyVal[1]));
     }
 
