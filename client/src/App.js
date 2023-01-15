@@ -76,7 +76,8 @@ function App() {
         },
         {
             label:'Refresh',
-            icon:'pi pi-fw pi-refresh'
+            icon:'pi pi-fw pi-refresh',
+            command:() => fetch('http://localhost:6969/refresh')
         }
     ];
 

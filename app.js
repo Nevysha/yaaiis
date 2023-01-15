@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {getImage} = require("./scrapper");
+const {init, getImage} = require("./scrapper");
 const cors = require("cors");
 
 var app = express();
@@ -22,6 +22,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+app.get('/refresh', (req, res) => {
+    init();
+    res.status(200).send();
+})
 
 app.get('/img/data/all', async (req, res) => {
     try {

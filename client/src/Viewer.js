@@ -22,10 +22,14 @@ function Browser(props) {
     eventBus.removeAllListeners('selectImage');
     eventBus.on('selectImage',(imgData) => {
         const newSelection = selectedImgs;
-        if (newSelection.map((item) => {return item.hash}).indexOf(imgData.hash) < 0) {
+        const index = newSelection.map((item) => {return item.hash}).indexOf(imgData.hash);
+        if (index < 0) {
             newSelection.push(imgData);
             setSelectedImgs(newSelection);
             setActiveIndex(newSelection.length - 1);
+        }
+        else {
+            setActiveIndex(index);
         }
         setCheatRender(uniqid());
     });

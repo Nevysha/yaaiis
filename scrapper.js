@@ -161,7 +161,7 @@ const getImage = async (hash) => {
 
 }
 
-module.exports = {scrap, getImage}
+module.exports = {init, getImage}
 
 
 
