@@ -8,6 +8,8 @@ var usersRouter = require('./routes/users');
 const {init, getImage, getPrompt2Img, getSampler2img, getModel2img} = require("./scrapper");
 const cors = require("cors");
 
+const {yaaiisDatabase} = require('./yaaiisDatabase');
+
 var app = express();
 app.use(cors({
     origin: 'http://localhost:3000',

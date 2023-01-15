@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require('fs').promises;
 const { createHash } = require('crypto');
 const png = require('png-metadata');
+const {yaaiisDatabase} = require('./yaaiisDatabase');
 
 let images = {}; //TODO create class to handle all file, manage duplicate etc
 let model2img = {};
@@ -117,6 +118,10 @@ const scrap = async (folderPath) => {
             images[hash].paths.push(fullPath)
         }
 
+        //insert into database
+        const {Image} = await yaaiisDatabase.get();
+        await Image.upsert(imgData);
+
     }
 }
 
@@ -127,16 +132,12 @@ function addToRepository(model2img, val, img) {
     model2img[val].push(img);
 }
 
-const init = async () => {
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images");
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images");
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves");
-
-    const imagesFlatten = Object.values(images);
+//TODO remove this and use database
+function loadInMemory(_images) {
     //most recent first
-    imagesFlatten.sort((a,b) => {
-        if(a.stats.mtime < b.stats.mtime) return 1;
-        if(a.stats.mtime > b.stats.mtime) return -1;
+    _images.sort((a, b) => {
+        if (a.stats.mtime < b.stats.mtime) return 1;
+        if (a.stats.mtime > b.stats.mtime) return -1;
         return 0;
     });
 
@@ -144,20 +145,16 @@ const init = async () => {
     model2img = {};
     prompt2img = {};
     sampler2img = {};
-    for (let img of imagesFlatten) {
+    for (let img of _images) {
         images[img.hash] = img;
 
         for (let metadata of img.generationMetadata) {
 
             if (metadata.key === 'Model') {
                 addToRepository(model2img, metadata.val, img);
-            }
-
-            else if (metadata.key === 'Sampler') {
+            } else if (metadata.key === 'Sampler') {
                 addToRepository(sampler2img, metadata.val, img);
-            }
-
-            else if (metadata.key === 'prompt') {
+            } else if (metadata.key === 'prompt') {
                 let parsedPrompt = metadata.val.split(',');
                 for (let prompt of parsedPrompt) {
                     addToRepository(prompt2img, prompt, img);
@@ -166,10 +163,30 @@ const init = async () => {
             }
         }
     }
+}
+
+const refresh = async () => {
+    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images");
+    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images");
+    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves");
+
+    const imagesFlatten = Object.values(images);
+    loadInMemory(imagesFlatten);
 
     console.log(`parsing error count : ${errors.length}`);
 
     return images;
+}
+
+const init = async () => {
+    const {Image} = await yaaiisDatabase.get();
+    if ((await Image.count()) <= 0) {
+        await refresh();
+    }
+    else {
+        const _images = await Image.findAll();
+        loadInMemory(_images);
+    }
 }
 init();
 
@@ -186,7 +203,7 @@ const getSampler2img = () => {
 const getModel2img = () => {
     return model2img
 };
-module.exports = {init, getImage, getPrompt2Img, getSampler2img, getModel2img}
+module.exports = {init: refresh, getImage, getPrompt2Img, getSampler2img, getModel2img}
 
 
 
