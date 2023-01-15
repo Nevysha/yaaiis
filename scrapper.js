@@ -53,7 +53,6 @@ function _parse(fullPath, hash) {
             let size = keyVal[1].split("x");
             data.push(sanitizeKeyVal("width", size[0]));
             data.push(sanitizeKeyVal("height", size[1]));
-            continue;
         }
         data.push(sanitizeKeyVal(keyVal[0], keyVal[1]));
     }
