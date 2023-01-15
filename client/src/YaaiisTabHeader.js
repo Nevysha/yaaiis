@@ -10,20 +10,32 @@ function YaaiisTabHeader(props) {
     const [imgData] = useState(props.imgData);
     const [showHover, setShowHover] = useState(false);
     const closeImg = props.closeImg;
+    const pinnedHash = props.pinnedHash;
 
     const hash = imgData.hash;
+    const [forcePin, setForcePin] = useState(pinnedHash.indexOf(hash) < 0);
+
 
     const activateTab = () => {
         setShowHover(false);
-        eventBus.emit('selectImage', hash);
+        eventBus.emit('selectImageTab', hash);
         eventBus.emit('selectTabImage', hash);
+    }
+
+    const togglePinTab = () => {
+        setForcePin(!forcePin);
+        eventBus.emit('togglePinTab', hash);
+    }
+
+    const getPinButtonClassName = () => {
+        return "tabButton tabButtonPin" + (!forcePin ? " pinnedOff" : "");
     }
 
     if (!hash) return (<div/>);
 
     return (
         <div style={{display:'flex'}}>
-            <Button className="tabButton tabButtonPin" title="Pin tab">
+            <Button className={getPinButtonClassName()} title="Pin tab" onClick={() => togglePinTab(hash)}>
                 <FontAwesomeIcon icon={faMapPin} />
             </Button>
             <div className="tab-title-text" onMouseEnter={() => setShowHover(true)}>{hash.substring(0,8)}</div>

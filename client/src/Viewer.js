@@ -9,16 +9,45 @@ function Browser(props) {
     const eventBus = props.eventBus;
 
     const ref = useRef(null);
+    const pinnedHash = useRef([]).current;
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [selectedImgs, setSelectedImgs] = useState([]);
     const [activeIndex, setActiveIndex] = useState(selectedImgs.length-1);
     const [cheatRender, setCheatRender] = useState(uniqid());
 
+    eventBus.removeAllListeners('togglePinTab');
+    eventBus.on('togglePinTab', (hash) => {
+        if (pinnedHash.indexOf(hash) <= 0) {
+            pinnedHash.push(hash);
+            return;
+        }
+        for (let index in pinnedHash) {
+            if (pinnedHash[index] === hash) {
+                pinnedHash.splice(Number(index), 1);
+            }
+        }
+
+    })
+
+    eventBus.removeAllListeners('selectImageTab');
+    eventBus.on('selectImageTab',(hash) => {
+        const index = selectedImgs.map((item) => {return item.hash}).indexOf(hash);
+        setActiveIndex(index);
+    });
+
     eventBus.removeAllListeners('selectImage');
     eventBus.on('selectImage',(imgData) => {
-        const newSelection = selectedImgs;
-        const index = newSelection.map((item) => {return item.hash}).indexOf(imgData.hash);
+
+        //remove unpined tab
+        const newSelection = selectedImgs.filter((img) => {
+            if (pinnedHash.indexOf(img.hash) >= 0) {
+                return img;
+            }
+        })
+
+        // const newSelection = selectedImgs;
+        const index = selectedImgs.map((item) => {return item.hash}).indexOf(imgData.hash);
         if (index < 0) {
             newSelection.push(imgData);
             setSelectedImgs(newSelection);
@@ -62,7 +91,7 @@ function Browser(props) {
 
 
     const getHeader = (imgData) => {
-        return (<YaaiisTabHeader closeImg={closeImg} imgData={imgData} eventBus={eventBus}/>)
+        return (<YaaiisTabHeader pinnedHash={pinnedHash} closeImg={closeImg} imgData={imgData} eventBus={eventBus}/>)
     }
 
     function getTab() {

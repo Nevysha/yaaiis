@@ -62,6 +62,10 @@ h4 {
     margin-right: -10px;
 }
 
+.pinnedOff {
+    color: red;
+}
+
 .tabButtonPin {
     margin-left: -10px;
 }
