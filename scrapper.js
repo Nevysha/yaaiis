@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require('fs');
+const fs = require('fs').promises;
 const png = require('png-metadata');
 const { createHash } = require('crypto');
 const {XMLParser} = require("fast-xml-parser");
@@ -90,47 +90,68 @@ const _get = async (buf) => {
 let images = {}; //TODO create class to handle all file, manage duplicate etc
 
 const scrap = async (folderPath) => {
-    return fs.readdir(folderPath, async (err, files) => {
+    const files = await fs.readdir(folderPath);
 
-        console.log(`loading ${files.length} files from path`);
-        let i = 0;
+    console.log(`loading ${files.length} files from path`);
+    let i = 0;
 
-        for (const file of files) {
-            const fullPath = path.join(folderPath, file);
+    for (const file of files) {
+        const fullPath = path.join(folderPath, file);
 
-            if (!file.endsWith('png'))  {
-                console.log(`${++i}/${files.length} not a png`);
-                continue;
-            }
-
-            const buff = fs.readFileSync(fullPath);
-            let t = await _get(buff);
-
-            const hash = createHash("sha256").update(buff).digest("hex");
-            console.log(`${++i}/${files.length} hash:${hash}`);
-
-            if (!images[hash]) {
-                images[hash] = {
-                    generationMetadata:t.parsed ?? [],
-                    paths:[fullPath],
-                    hash:hash
-                };
-            }
-            else {
-                console.log(`found duplicate : ${hash}`);
-                images[hash].paths.push(fullPath)
-            }
-
+        if (!file.endsWith('png'))  {
+            console.log(`${++i}/${files.length} not a png`);
+            continue;
         }
 
-        return images;
-    });
+        const buff = await fs.readFile(fullPath);
+        const hash = createHash("sha256").update(buff).digest("hex");
+
+        let t = await _get(buff);
+
+        if (!t.parsed) {
+            console.log(`cannot parse ${hash}, ignoring`);
+            continue;
+        }
+
+        console.log(`${++i}/${files.length} hash:${hash}`);
+
+        const stats = await fs.stat(fullPath);
+
+        if (!images[hash]) {
+            images[hash] = {
+                generationMetadata:t.parsed ?? [],
+                paths:[fullPath],
+                hash:hash,
+                stats:stats
+            };
+        }
+        else {
+            console.log(`found duplicate : ${hash}`);
+            images[hash].paths.push(fullPath)
+        }
+
+    }
 }
 
 const init = async () => {
     await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images");
     await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images");
     await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves");
+
+    const imagesFlatten = Object.values(images);
+    //most recent first
+    imagesFlatten.sort((a,b) => {
+        if(a.stats.mtime < b.stats.mtime) return 1;
+        if(a.stats.mtime > b.stats.mtime) return -1;
+        return 0;
+    });
+
+    images = {};
+    for (let img of imagesFlatten) {
+        images[img.hash] = img;
+    }
+
+    return images;
 }
 init();
 
