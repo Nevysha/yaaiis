@@ -27,7 +27,7 @@ function _parse(fullPath, hash) {
 
     if (parsedSplit.length === 1) {
         //for easier parsing, adding empty string to the beginning so all case are treated the same way
-        parsedSplit.unshift("");
+        parsedSplit.push("");
     }
 
     data.push(sanitizeKeyVal('prompt', parsedSplit[0]));
@@ -53,8 +53,8 @@ function _parse(fullPath, hash) {
 }
 const sanitizeKeyVal = (key, val) => {
     return {
-        key: key.replace(/[^\x00-\x7F]/g, "").trim(),
-        val:val.replace(/[^\x00-\x7F]/g, "").trim()
+        key: key.replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim(),
+        val:val.replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim()
     }
 }
 
