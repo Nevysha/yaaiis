@@ -102,3 +102,15 @@ h4 {
     margin-right: 10px;
 }
 
+.react-resizable-handle-e {
+    background-color: #c298d8;
+}
+
+.p-tabview-panels {
+    height: 100%;
+}
+
+.p-tabview {
+    height: 100%;
+}
+

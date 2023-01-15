@@ -4,9 +4,10 @@ import { Splitter, SplitterPanel } from 'primereact/splitter';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import "primereact/resources/themes/bootstrap4-dark-purple/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
-import "primeicons/primeicons.css";                                //icons
+import "primereact/resources/themes/bootstrap4-dark-purple/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "react-resizable/css/styles.css"
 import './App.css';
 import Browser from "./Browser";
 import EventEmitter from "eventemitter3";
@@ -14,12 +15,16 @@ import Viewer from "./Viewer";
 import ImgData from "./ImgData";
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
+import { Resizable } from 'react-resizable';
 
 
 function App() {
 
     const [value, setValue] = useState('');
     const [all, setAll] = useState({});
+    const [browserWidth, setBrowserWidth] = useState(440);
+    const [infoWidth, setInfoWidth] = useState(500);
+    const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
 
 
     const eventBus = new EventEmitter();
@@ -53,6 +58,13 @@ function App() {
         load();
     }, []);
 
+
+    console.log(browserWidth)
+    const onFirstBoxResize = (event, {element, size, handle}) => {
+        console.log(size)
+        setBrowserWidth(size.width);
+    }
+
     const items = [
         {
             label:'Filter',
@@ -82,7 +94,7 @@ function App() {
     ];
 
     return (
-        <div style={{height: '100vh'}}>
+        <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
 
             <Menubar
                 model={items}
@@ -99,20 +111,26 @@ function App() {
                 }
                 end={<Button label="Help" icon="pi pi-question"/>}/>
 
-            <Splitter style={{height: '100%'}}>
-                <SplitterPanel id='browserSplitterPanel' className="flex align-items-center justify-content-center" style={{display:'flex', flexDirection:'column'}} size={30} minSize={10}>
-                    <h4>Browser</h4>
-                    <Browser all={all} eventBus={eventBus}/>
-                </SplitterPanel>
-                <SplitterPanel size={50} style={{display: 'flex', flexDirection:'column'}}>
+            <div style={{height: '100%', display:'flex'}}>
+                <Resizable width={browserWidth} height={'100%'} id='browserSplitterPanel'
+                        style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
+                        resizeHandles={['e']}
+                        onResize={onFirstBoxResize}>
+
+                    <div style={{width:browserWidth+"px", height:'100%'}}>
+                        <h4>Browser</h4>
+                        <Browser all={all} eventBus={eventBus}/>
+                    </div>
+                </Resizable>
+                <div style={{display: 'flex', flexDirection:'column', flex:1, height:"100%", maxWidth:viewerWidth+'px', padding:"0 5px 0 5px"}}>
                     <h4>Viewer</h4>
                     <Viewer eventBus={eventBus}/>
-                </SplitterPanel>
-                <SplitterPanel size={20} style={{display: 'flex', flexDirection:'column'}}>
+                </div>
+                <div style={{display: 'flex', flexDirection:'column', width:"500px"}}>
                     <h4>info</h4>
                     <ImgData eventBus={eventBus}/>
-                </SplitterPanel>
-            </Splitter>
+                </div>
+            </div>
         </div>
     );
 }
