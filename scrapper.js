@@ -4,6 +4,9 @@ const { createHash } = require('crypto');
 const png = require('png-metadata');
 
 let images = {}; //TODO create class to handle all file, manage duplicate etc
+let model2img = {};
+let prompt2img = {};
+let sampler2img = {};
 let errors = [];
 
 function _parse(fullPath, hash) {
@@ -118,6 +121,13 @@ const scrap = async (folderPath) => {
     }
 }
 
+function addToRepository(model2img, val, img) {
+    if (!model2img[val]) {
+        model2img[val] = [];
+    }
+    model2img[val].push(img);
+}
+
 const init = async () => {
     await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images");
     await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images");
@@ -132,8 +142,30 @@ const init = async () => {
     });
 
     images = {};
+    model2img = {};
+    prompt2img = {};
+    sampler2img = {};
     for (let img of imagesFlatten) {
         images[img.hash] = img;
+
+        for (let metadata of img.generationMetadata) {
+
+            if (metadata.key === 'Model') {
+                addToRepository(model2img, metadata.val, img);
+            }
+
+            else if (metadata.key === 'Sampler') {
+                addToRepository(sampler2img, metadata.val, img);
+            }
+
+            else if (metadata.key === 'prompt') {
+                let parsedPrompt = metadata.val.split(',');
+                for (let prompt of parsedPrompt) {
+                    addToRepository(prompt2img, prompt, img);
+                }
+
+            }
+        }
     }
 
     console.log(`parsing error count : ${errors.length}`);
@@ -142,13 +174,20 @@ const init = async () => {
 }
 init();
 
-const getImage = async (hash) => {
+const getImage = (hash) => {
     if (hash) return images[hash];
     return images;
-
 }
-
-module.exports = {init, getImage}
+const getPrompt2Img = () => {
+    return prompt2img
+};
+const getSampler2img = () => {
+    return sampler2img
+};
+const getModel2img = () => {
+    return model2img
+};
+module.exports = {init, getImage, getPrompt2Img, getSampler2img, getModel2img}
 
 
 

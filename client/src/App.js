@@ -1,7 +1,6 @@
 import {useState,useEffect} from "react";
 import { InputText } from 'primereact/inputtext';
-import { Splitter, SplitterPanel } from 'primereact/splitter';
-
+import { AutoComplete } from 'primereact/autocomplete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import "primereact/resources/themes/bootstrap4-dark-purple/theme.css";
@@ -16,15 +15,25 @@ import ImgData from "./ImgData";
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { Resizable } from 'react-resizable';
+import uniqid from "uniqid";
 
 
 function App() {
 
     const [searchValue, setSearchValue] = useState('');
+
+    const [filterPromptValue, setFilterPromptValue] = useState('');
+    const [filterModelValue, setFilterModelValue] = useState('');
+    const [filterSamplerValue, setFilterSamplerValue] = useState('');
+
     const [all, setAll] = useState({});
+    const [modelFilter, setModelFilter] = useState([]);
+    const [samplerFilter, setSamplerFilter] = useState([]);
+    const [promptFilter, setPromptFilter] = useState([]);
     const [browserWidth, setBrowserWidth] = useState(440);
     const [infoWidth, setInfoWidth] = useState(500);
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
+    const [cheatRender, setCheatRender] = useState(uniqid());
 
 
     const eventBus = new EventEmitter();
@@ -52,6 +61,40 @@ function App() {
         })).blob();
         let blobJson = JSON.parse(await blob.text());
         setAll(blobJson);
+
+
+        const fetchModels = await fetch("http://localhost:6969/img/filter/model");
+        setModelFilter(
+            JSON.parse(await fetchModels.text())
+        );
+
+        const fetchSampler = await fetch("http://localhost:6969/img/filter/sampler");
+        setSamplerFilter(
+            JSON.parse(await fetchSampler.text())
+        );
+
+
+        setCheatRender(uniqid());
+    }
+
+    const _genericSuggestBoxLoad = async (what, query, stateSetFunc) => {
+        const fetchPrompt = await fetch(`http://localhost:6969/img/filter/${what}`);
+        const fetchPromptJson = JSON.parse(await fetchPrompt.text())
+        stateSetFunc(
+            fetchPromptJson.filter(val => val.indexOf(query) >= 0)
+        );
+    }
+
+    const loadPrompt2Img = async (e) => {
+        await _genericSuggestBoxLoad('prompt',e.query, setPromptFilter);
+    }
+
+    const loadSampler2Img = async (e) => {
+        await _genericSuggestBoxLoad('sampler',e.query, setSamplerFilter);
+    }
+
+    const loadModel2Img = async (e) => {
+        await _genericSuggestBoxLoad('model',e.query, setModelFilter);
     }
 
     useEffect(() => {
@@ -89,6 +132,20 @@ function App() {
         return filtered;
     }
 
+    function getAutoCompleteElement(title, value, suggestion, completeMethod, onChange) {
+        return (
+            <div>
+                <div className="p-inputgroup">
+                    <span className="p-inputgroup-addon">{title}</span>
+                    <AutoComplete value={value} suggestions={suggestion} completeMethod={completeMethod}
+                                  multiple onChange={onChange} aria-label="Prompts"
+                                  dropdownAriaLabel="Select Prompts"/>
+                </div>
+            </div>
+
+        );
+    }
+
     const items = [
         {
             label:'Filter',
@@ -111,6 +168,22 @@ function App() {
             ]
         },
         {
+            template: (item, options) => {
+                return getAutoCompleteElement('Model', filterModelValue, modelFilter, loadModel2Img, (e) => setFilterModelValue(e.value));
+            }
+        },
+        {
+            template: (item, options) => {
+                return getAutoCompleteElement('Sampler', filterSamplerValue, samplerFilter, loadSampler2Img, (e) => setFilterSamplerValue(e.value));
+            }
+        },
+        {
+            template: (item, options) => {
+                return getAutoCompleteElement('Prompt', filterPromptValue, promptFilter, loadPrompt2Img, (e) => setFilterPromptValue(e.value));
+            }
+        },
+
+        {
             label:'Refresh',
             icon:'pi pi-fw pi-refresh',
             command:() => fetch('http://localhost:6969/refresh')
@@ -119,7 +192,7 @@ function App() {
 
     return (
         <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
-
+            <span style={{display:"none"}}>{cheatRender}</span>
             <Menubar
                 model={items}
                 start={
