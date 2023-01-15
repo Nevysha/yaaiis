@@ -41,25 +41,41 @@ h4 {
     margin: 4px 0 4px 0;
 }
 
-.tabButtonClose {
+.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 0 10px 0 10px;
+}
+
+.tabButton {
     background-color: transparent;
     border: none;
     height: 16px;
-    margin: 0 -16px 0 0;
     color: #c298d8;
+    margin-top: 7px;
 }
-.tabButtonClose:enabled:hover {
-    background: transparent;
-    color: white;
-    border: none;
+.tabButton:hover {
+    background: transparent !important;
+    color: white !important;
+    border: none !important;
+}
+
+.tabButtonClose {
+    margin-right: -10px;
+}
+
+.tabButtonPin {
+    margin-left: -10px;
+}
+
+.tab-title-text {
+    padding: 7px 0 7px 0;
 }
 
 .tabShowHover {
     height: 100px;
     width: 100px;
     position: fixed;
-    margin-top: 8px;
-    margin-left: -5px;
+    /*margin-top: 8px;*/
+    /*margin-left: -5px;*/
     background-color: rgb(42 50 61);
     border: 2px solid #c298d8;
     text-align: center;

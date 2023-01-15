@@ -62,7 +62,7 @@ function Browser(props) {
 
 
     const getHeader = (imgData) => {
-        return (<YaaiisTabHeader closeImg={closeImg} imgData={imgData}/>)
+        return (<YaaiisTabHeader closeImg={closeImg} imgData={imgData} eventBus={eventBus}/>)
     }
 
     function getTab() {
