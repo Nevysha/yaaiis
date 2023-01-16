@@ -36,7 +36,7 @@ function App() {
     const [filterModelValue, setFilterModelValue] = useState([]);
     const [filterSamplerValue, setFilterSamplerValue] = useState([]);
 
-    const [all, setAll] = useState({});
+    const [all, setAll] = useState([]);
     const [modelFilter, setModelFilter] = useState([]);
     const [samplerFilter, setSamplerFilter] = useState([]);
     const [promptFilter, setPromptFilter] = useState([]);
@@ -45,10 +45,16 @@ function App() {
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
     const [cheatRender, setCheatRender] = useState(uniqid());
 
+    const getAll = () => {
+        return all;
+    }
 
+    socket.off('newImage');
     socket.on('newImage', (data) => {
         console.log(data);
-        filter();
+        let _all = [...getAll()];
+        _all.unshift(data);
+        setAll(_all);
     });
 
     const eventBus = new EventEmitter();
@@ -93,7 +99,11 @@ function App() {
             }
         })).blob();
 
-        setAll(JSON.parse(await blob.text()));
+        let _all = JSON.parse(await blob.text());
+        setAll(
+            //TODO change value returned by server to avoid Object.values
+            Object.values(_all)
+        );
 
     }
 
@@ -135,17 +145,15 @@ function App() {
     const applySearch = () => {
         if (searchValue === "") return all;
 
-        const filtered = {};
-        for (let hash of Object.keys(all)) {
+        const filtered = [];
+        for (let hash of all) {
             const imgData = all[hash];
 
             if (JSON.stringify(imgData.generationMetadata).includes(searchValue)) {
-                filtered[hash] = imgData;
-                continue;
+                filtered.push(imgData);
             }
-            if (JSON.stringify(imgData.paths).includes(searchValue)) {
-                filtered[hash] = imgData;
-                continue;
+            else if (JSON.stringify(imgData.paths).includes(searchValue)) {
+                filtered.push(imgData);
             }
 
         }

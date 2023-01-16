@@ -3,15 +3,19 @@ function Browser(props) {
     const all = props.all;
     const eventBus = props.eventBus;
 
-    const sendToViewer = (hash) => {
-        eventBus.emit('selectImage', all[hash]);
-        eventBus.emit('selectTabImage', all[hash]);
+    const sendToViewer = (imgData) => {
+        eventBus.emit('selectImage', imgData);
+        eventBus.emit('selectTabImage', imgData);
     }
 
     return (
         <div style={{overflowY:'scroll'}}>
-            {Object.keys(all).map((hash) => {
-                return (<img loading="lazy" key={hash} onClick={() => sendToViewer(hash)} width="100" src={`http://localhost:6969/img/${hash}`} alt={hash}/>)
+            {all.map((imgData) => {
+                return (<img loading="lazy"
+                             key={imgData.hash}
+                             onClick={() => sendToViewer(imgData)}
+                             width="100"
+                             src={`http://localhost:6969/img/${imgData.hash}`} alt={imgData.hash}/>)
             })}
         </div>
     )
