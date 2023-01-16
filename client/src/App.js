@@ -249,7 +249,7 @@ function App() {
                     </div>
                 }
                 end={<Button label="Help" icon="pi pi-question"/>}/>
-            <div style={{height: '100%', display:'flex'}}>
+            <div style={{height: 'calc(100% - 65px)', display:'flex'}}>
 
                 <Resizable width={browserWidth} id='browserSplitterPanel'
                         style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
@@ -265,7 +265,10 @@ function App() {
 
                 <div style={{display: 'flex', flexDirection:'column', flex:1, height:"100%", maxWidth:viewerWidth+'px', padding:"0 5px 0 5px"}}>
                     <h4>Viewer</h4>
-                    <Viewer eventBus={eventBus}/>
+                    <div style={{display:'flex'}}>
+                        <Viewer eventBus={eventBus}/>
+                        <ImgData eventBus={eventBus} _filterRef={_filterRef}/>
+                    </div>
                 </div>
 
                 <div style={{display: 'flex', flexDirection:'column'}}>
@@ -276,16 +279,12 @@ function App() {
                                onResize={onFirstResizeInfo}>
 
                         <div style={{width:infoWidth+"px", height:'100%'}}>
-                            <h4>info</h4>
-                            <ImgData eventBus={eventBus} _filterRef={_filterRef}/>
+                            <h4>Automatic1111</h4>
+                            <iframe style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
                         </div>
 
                     </Resizable>
 
-                </div>
-                <div style={{width:"500px", height:'100%'}}>
-                    <h4>info</h4>
-                    <iframe style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
                 </div>
             </div>
         </div>
