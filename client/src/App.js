@@ -16,8 +16,17 @@ import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { Resizable } from 'react-resizable';
 import uniqid from "uniqid";
-import {encode} from 'html-entities';
+import io from 'socket.io-client';
 
+const socket = io('http://localhost:6968', {
+    reconnectionDelay: 1000,
+    reconnection: true,
+    reconnectionAttemps: 10,
+    transports: ['websocket'],
+    agent: false,
+    upgrade: false,
+    rejectUnauthorized: false
+});
 
 function App() {
 
@@ -36,6 +45,11 @@ function App() {
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
     const [cheatRender, setCheatRender] = useState(uniqid());
 
+
+    socket.on('newImage', (data) => {
+        console.log(data);
+        filter();
+    });
 
     const eventBus = new EventEmitter();
 

@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {init, getImage, getPrompts, getSamplers, getModels} = require("./scrapper");
+const {init, getImage, getPrompts, getSamplers, getModels, setSocket} = require("./scrapper");
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
@@ -118,6 +118,17 @@ app.get('/img/:hash', async (req, res) => {
     } catch (e) {
         res.status(500).send(e);
     }
+});
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+io.on('connection', (socket) => {
+    console.log('A connection is made');
+    setSocket(socket);
+})
+
+http.listen(6968, () => {
+    console.log('listening on localhost:6968');
 });
 
 

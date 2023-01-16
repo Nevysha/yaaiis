@@ -60,6 +60,7 @@ function _parse(fullPath, hash) {
     return data;
 }
 const sanitizeKeyVal = (key, val) => {
+    val = val || '';
     return {
         key: key.toLowerCase().replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim(),
         val:val.replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim()
@@ -121,6 +122,8 @@ const scrapFile = async (fullPath) => {
     //insert into database
     const {Image} = await yaaiisDatabase.get();
     await Image.upsert(imgData);
+
+    return imgData;
 }
 
 const scrap = async (folderPath) => {
@@ -182,12 +185,20 @@ const init = async () => {
     }
 
     for (let folder of foldersPath) {
-        chokidar.watch(folder).on('all', (event, path) => {
-            console.log(event, path);
-            if (event === 'add') {
-                scrapFile(path);
-            }
-        });
+        chokidar
+            .watch(
+                folder,
+                {ignoreInitial: true}
+                )
+            .on('all', async (event, path) => {
+                console.log(event, path);
+                if (event === 'add') {
+                    const imgData = await scrapFile(path);
+                    if (imgData) {
+                        socket.emit('newImage', imgData);
+                    }
+                }
+            });
     }
 
 }
@@ -225,7 +236,13 @@ const getSamplers = async () => {
 const getModels = async () => {
     return await getFilterable('model');
 };
-module.exports = {init: refresh, getImage, getPrompts, getSamplers, getModels}
+
+let socket;
+const setSocket = (_socket) => {
+    socket = _socket;
+}
+
+module.exports = {init: refresh, getImage, getPrompts, getSamplers, getModels, setSocket}
 
 
 
