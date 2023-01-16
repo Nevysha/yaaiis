@@ -275,6 +275,10 @@ function App() {
                     </Resizable>
 
                 </div>
+                <div style={{width:"500px", height:'100%'}}>
+                    <h4>info</h4>
+                    <iframe style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
+                </div>
             </div>
         </div>
     );
