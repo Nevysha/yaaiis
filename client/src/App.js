@@ -105,7 +105,7 @@ function App() {
 
     useEffect(() => {
         filter();
-    }, [filterPromptValue, filterSamplerValue, filterModelValue, filter]);
+    }, [filterPromptValue, filterSamplerValue, filterModelValue]);
 
 
     const onFirstResizeBrowser = (event, {element, size, handle}) => {

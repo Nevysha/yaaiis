@@ -72,11 +72,18 @@ app.post('/img/query', async (req, res) => {
         if (model.length >= 1) where[Op.and].push({model:model});
         if (sampler.length >= 1) where[Op.and].push({sampler:sampler});
 
-        // for (let p of prompt) {
-        //     where[Op.and].push()
-        // }
+        if (prompt.length >= 1) {
+            let or = {[Op.or]:[]}
 
-        // if (prompt.length >= 1) where['prompt'] = prompt;
+            for (let p of prompt) {
+                or[Op.or].push({
+                    prompt: {[Op.like]:`%${p}%`}
+                });
+            }
+            where[Op.and].push(or);
+        }
+
+
 
         const {Image} = await yaaiisDatabase.get();
         const images = await Image.findAll({
