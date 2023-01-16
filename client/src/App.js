@@ -23,9 +23,9 @@ function App() {
 
     const [searchValue, setSearchValue] = useState('');
 
-    const [filterPromptValue, setFilterPromptValue] = useState('');
-    const [filterModelValue, setFilterModelValue] = useState('');
-    const [filterSamplerValue, setFilterSamplerValue] = useState('');
+    const [filterPromptValue, setFilterPromptValue] = useState([]);
+    const [filterModelValue, setFilterModelValue] = useState([]);
+    const [filterSamplerValue, setFilterSamplerValue] = useState([]);
 
     const [all, setAll] = useState({});
     const [modelFilter, setModelFilter] = useState([]);
@@ -199,6 +199,17 @@ function App() {
         }
     ];
 
+    const _filterRef = {
+        model:{
+            value:filterModelValue,
+            set:setFilterModelValue
+        },
+        sampler:{
+            value:filterSamplerValue,
+            set:setFilterSamplerValue
+        }
+    }
+
     return (
         <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
             <span style={{display:"none"}}>{cheatRender}</span>
@@ -216,7 +227,6 @@ function App() {
                     </div>
                 }
                 end={<Button label="Help" icon="pi pi-question"/>}/>
-
             <div style={{height: '100%', display:'flex'}}>
 
                 <Resizable width={browserWidth} id='browserSplitterPanel'
@@ -245,7 +255,7 @@ function App() {
 
                         <div style={{width:infoWidth+"px", height:'100%'}}>
                             <h4>info</h4>
-                            <ImgData eventBus={eventBus}/>
+                            <ImgData eventBus={eventBus} _filterRef={_filterRef}/>
                         </div>
 
                     </Resizable>

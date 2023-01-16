@@ -36,7 +36,9 @@ function ImgData(props) {
                             <td>
                                 {filterable.indexOf(metadata.key) < 0 && metadata.val}
                                 {filterable.indexOf(metadata.key) >= 0 && (
-                                    <button>{metadata.val}</button>
+                                    <button onClick={() => {
+                                        props._filterRef[metadata.key].set([metadata.val])
+                                    }}>{metadata.val}</button>
                                 )}
                             </td>
                         </tr>
