@@ -16,6 +16,7 @@ import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { Resizable } from 'react-resizable';
 import uniqid from "uniqid";
+import {encode} from 'html-entities';
 
 
 function App() {
@@ -77,6 +78,29 @@ function App() {
         setCheatRender(uniqid());
     }
 
+    const filter = async () => {
+
+        const data = {};
+        if (filterModelValue !== "") data['model'] = filterModelValue;
+        if (filterSamplerValue !== "") data['sampler'] = filterSamplerValue;
+        if (filterPromptValue !== "") data['prompt'] = filterPromptValue;
+
+        const fetched = await fetch(
+            'http://localhost:6969/img/query',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }
+
+
+        );
+        setAll(JSON.parse(await fetched.text()));
+
+    }
+
     const _genericSuggestBoxLoad = async (what, query, stateSetFunc) => {
         const fetchPrompt = await fetch(`http://localhost:6969/img/filter/${what}`);
         const fetchPromptJson = JSON.parse(await fetchPrompt.text())
@@ -100,6 +124,10 @@ function App() {
     useEffect(() => {
         load();
     }, []);
+
+    useEffect(() => {
+        filter();
+    }, [filterPromptValue, filterSamplerValue, filterModelValue]);
 
 
     const onFirstResizeBrowser = (event, {element, size, handle}) => {
@@ -137,9 +165,12 @@ function App() {
             <div>
                 <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">{title}</span>
-                    <AutoComplete value={value} suggestions={suggestion} completeMethod={completeMethod}
-                                  multiple onChange={onChange} aria-label="Prompts"
-                                  dropdownAriaLabel="Select Prompts"/>
+
+                        <AutoComplete value={value} suggestions={suggestion} completeMethod={completeMethod}
+                                      dropdown multiple onChange={onChange} aria-label="Prompts"
+                                      dropdownAriaLabel="Select Prompts"/>
+
+
                 </div>
             </div>
 

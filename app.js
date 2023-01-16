@@ -9,6 +9,7 @@ const {init, getImage, getPrompt2Img, getSampler2img, getModel2img} = require(".
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
+const { Op } = require("sequelize");
 
 var app = express();
 app.use(cors({
@@ -55,8 +56,45 @@ app.get('/img/data/all', async (req, res) => {
     } catch (e) {
         res.status(500).send(e);
     }
-
 });
+
+app.post('/img/query', async (req, res) => {
+    try {
+
+        ///TODO clean this mess but it's 3AM and I work tomorrow ffs
+        const model = req.body.model ? req.body.model : [];
+        const sampler = req.body.sampler ? req.body.sampler : [];
+
+        //TODO construct "prompt LIKE %$1% or prompt LIKE %$2%... clause
+        const prompt = req.body.prompt ? req.body.prompt : [];
+
+        const where = {[Op.and]:[]};
+        if (model.length >= 1) where[Op.and].push({model:model});
+        if (sampler.length >= 1) where[Op.and].push({sampler:sampler});
+
+        // for (let p of prompt) {
+        //     where[Op.and].push()
+        // }
+
+        // if (prompt.length >= 1) where['prompt'] = prompt;
+
+        const {Image} = await yaaiisDatabase.get();
+        const images = await Image.findAll({
+            where: where
+        });
+
+        const map = images.reduce(function(map, obj) {
+            map[obj.hash] = obj;
+            return map;
+        }, {});
+
+        res.status(200).send(map);
+    } catch (e) {
+        console.error(e);
+        res.status(500).send(e);
+    }
+});
+
 app.get('/img/data/:hash', async (req, res) => {
     try {
         const imgData = getImage(req.params.hash);
