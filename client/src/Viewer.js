@@ -98,9 +98,9 @@ function Browser(props) {
         return selectedImgs.map((imgData) => {
             const hash = imgData.hash;
             return (
-                <TabPanel header={getHeader(imgData)} key={hash}>
-                    <div>
-                        <img style={{maxHeight: 'calc(100% - 500px)', maxWidth: '100%'}} src={`http://localhost:6969/img/${hash}`}
+                <TabPanel header={getHeader(imgData)} key={hash} style={{height:'100%'}}>
+                    <div style={{height:'100%'}}>
+                        <img style={{maxHeight: 'calc(100vh - 155px)', maxWidth: '100%'}} src={`http://localhost:6969/img/${hash}`}
                              alt={hash}/>
                     </div>
                 </TabPanel>
