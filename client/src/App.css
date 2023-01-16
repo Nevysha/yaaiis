@@ -89,20 +89,23 @@ h4 {
 }
 
 .imgData {
-    background: #2a323d;
-    padding: 1.25rem;
     border: 0 none;
-    border-top: 1px solid #3f4b5b;
-    border-bottom: 1px solid #2a323d;
     color: rgba(255, 255, 255, 0.87);
-    border-bottom-right-radius: 4px;
-    margin-top: 31px;
+    margin-top: 40px;
     width: 450px;
-    height: calc(100% + 1px);
+    position: fixed;
 }
 
-.imgData table tr {
-    background-color: #04040475;
+.imgData-row {
+    background-color: #0000009e;
+    margin-bottom: 1px;
+    padding: 4px;
+    font-size: 12px;
+}
+.imgData-row-label {
+    font-weight:bold;
+    color: #c298d8;
+    margin-right:10px;
 }
 
 .menubar-right {
@@ -119,6 +122,16 @@ h4 {
 .react-resizable-handle-w {
     background-color: #c298d8;
     margin-left: -15px;
+}
+.react-resizable-handle-ne {
+    background-color: #c298d8;
+    transform: rotate(315deg);
+    margin-left: -15px;
+}
+.react-resizable-handle-nw {
+    background-color: #c298d8;
+    margin-left: -25px;
+    transform: rotate(135deg);
 }
 
 .p-tabview-panels {

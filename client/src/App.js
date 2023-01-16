@@ -41,7 +41,7 @@ function App() {
     const [samplerFilter, setSamplerFilter] = useState([]);
     const [promptFilter, setPromptFilter] = useState([]);
     const [browserWidth, setBrowserWidth] = useState(440);
-    const [infoWidth, setInfoWidth] = useState(500);
+    const [infoWidth, setInfoWidth] = useState(window.innerWidth/2);
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
     const [cheatRender, setCheatRender] = useState(uniqid());
 
@@ -253,7 +253,7 @@ function App() {
 
                 <Resizable width={browserWidth} id='browserSplitterPanel'
                         style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
-                        resizeHandles={['e']}
+                        resizeHandles={['ne']}
                         onResize={onFirstResizeBrowser}>
 
                     <div style={{width:browserWidth+"px", height:'100%'}}>
@@ -267,7 +267,7 @@ function App() {
                     <h4>Viewer</h4>
                     <div style={{display:'flex'}}>
                         <Viewer eventBus={eventBus}/>
-                        <ImgData eventBus={eventBus} _filterRef={_filterRef}/>
+                        <ImgData eventBus={eventBus} _filterRef={_filterRef} marginRight={`${infoWidth+10}px`}/>
                     </div>
                 </div>
 
@@ -275,7 +275,7 @@ function App() {
 
                     <Resizable width={infoWidth} id='browserSplitterPanel'
                                style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
-                               resizeHandles={['w']}
+                               resizeHandles={['nw']}
                                onResize={onFirstResizeInfo}>
 
                         <div style={{width:infoWidth+"px", height:'100%'}}>

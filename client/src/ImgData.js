@@ -4,6 +4,7 @@ import uniqid from "uniqid";
 function ImgData(props) {
 
     const eventBus = props.eventBus;
+    const marginRight = props.marginRight
 
     const [imgData, setImgData] = useState([]);
     const [cheatRender, setCheatRender] = useState(uniqid());
@@ -21,41 +22,37 @@ function ImgData(props) {
     const filterable = ['model','sampler'];
 
     return (
-        <div className="imgData">
+        <div className="imgData" style={{right:marginRight}}>
             <span style={{display:"none"}}>{cheatRender}</span>
-            <table>
-                <tbody>
+            <div>
                 {imgData.generationMetadata.map((metadata) => {
                     return (
-                        <tr key={metadata.key}>
-                            <td>
-                                <div style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
+                        <div key={metadata.key} className='imgData-row'>
+
+                            <div>
+                                <span className='imgData-row-label'>
                                     {metadata.key}
-                                </div>
-                            </td>
-                            <td>
+                                </span>
                                 {filterable.indexOf(metadata.key) < 0 && metadata.val}
                                 {filterable.indexOf(metadata.key) >= 0 && (
                                     <button onClick={() => {
                                         props._filterRef[metadata.key].set([metadata.val])
                                     }}>{metadata.val}</button>
                                 )}
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     )
                 })}
 
-                <tr key="path_1">
-                    <td>
-                        <div style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
+                <div key="path_1" className='imgData-row'>
+                    <div>
+                        <div className='imgData-row-label' style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
                             Path
                         </div>
-                    </td>
+                    </div>
                     <td>{imgData.paths[0]}</td>
-                </tr>
-
-                </tbody>
-            </table>
+                </div>
+            </div>
 
         </div>
     )
