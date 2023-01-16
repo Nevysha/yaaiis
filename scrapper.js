@@ -6,9 +6,6 @@ const {yaaiisDatabase} = require('./yaaiisDatabase');
 const {Op, Sequelize} = require("sequelize");
 
 let images = {}; //TODO create class to handle all file, manage duplicate etc
-let model2img = {};
-let prompt2img = {};
-let sampler2img = {};
 let errors = [];
 
 function _parse(fullPath, hash) {
@@ -154,26 +151,8 @@ function loadInMemory(_images) {
     });
 
     images = {};
-    model2img = {};
-    prompt2img = {};
-    sampler2img = {};
     for (let img of _images) {
         images[img.hash] = img;
-
-        for (let metadata of img.generationMetadata) {
-
-            if (metadata.key === 'model') {
-                addToRepository(model2img, metadata.val, img);
-            } else if (metadata.key === 'sampler') {
-                addToRepository(sampler2img, metadata.val, img);
-            } else if (metadata.key === 'prompt') {
-                let parsedPrompt = metadata.val.split(',');
-                for (let prompt of parsedPrompt) {
-                    addToRepository(prompt2img, prompt, img);
-                }
-
-            }
-        }
     }
 }
 
