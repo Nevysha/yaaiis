@@ -62,7 +62,7 @@ function _parse(fullPath, hash) {
 }
 const sanitizeKeyVal = (key, val) => {
     return {
-        key: key.replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim(),
+        key: key.toLowerCase().replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim(),
         val:val.replace(/[^\x00-\x7F]/g, "").replace('\0', '').trim()
     }
 }
@@ -118,6 +118,15 @@ const scrap = async (folderPath) => {
             images[hash].paths.push(fullPath)
         }
 
+        //up some of the metadata directly in the imgData
+        const metaDataToReport = ['model', 'sampler', 'prompt'];
+        for (let metadata of imgData.generationMetadata) {
+            if (metaDataToReport.indexOf(metadata.key) >= 0) {
+                imgData[metadata.key] = metadata.val;
+            }
+        }
+
+
         //insert into database
         const {Image} = await yaaiisDatabase.get();
         await Image.upsert(imgData);
@@ -150,9 +159,9 @@ function loadInMemory(_images) {
 
         for (let metadata of img.generationMetadata) {
 
-            if (metadata.key === 'Model') {
+            if (metadata.key === 'model') {
                 addToRepository(model2img, metadata.val, img);
-            } else if (metadata.key === 'Sampler') {
+            } else if (metadata.key === 'sampler') {
                 addToRepository(sampler2img, metadata.val, img);
             } else if (metadata.key === 'prompt') {
                 let parsedPrompt = metadata.val.split(',');
