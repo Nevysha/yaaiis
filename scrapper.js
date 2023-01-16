@@ -4,6 +4,7 @@ const { createHash } = require('crypto');
 const png = require('png-metadata');
 const {yaaiisDatabase} = require('./yaaiisDatabase');
 const {Op, Sequelize} = require("sequelize");
+const chokidar = require('chokidar');
 
 let images = {}; //TODO create class to handle all file, manage duplicate etc
 let errors = [];
@@ -65,6 +66,63 @@ const sanitizeKeyVal = (key, val) => {
     }
 }
 
+const scrapFile = async (fullPath) => {
+    if (!fullPath.endsWith('png'))  {
+        console.log(`not a png`);
+        return;
+    }
+
+    const buff = await fs.readFile(fullPath);
+    const hash = createHash("sha256").update(buff).digest("hex");
+
+    let isError = false;
+    let parsed;
+    try {
+        parsed = _parse(fullPath, hash);
+    } catch (e) {
+        console.log(e);
+        parsed = {key:"error", val:"no metadata"};
+        isError = true;
+    }
+
+    const stats = await fs.stat(fullPath);
+
+    const imgData = {
+        generationMetadata:parsed,
+        paths:[fullPath],
+        hash:hash,
+        stats:stats
+    };
+
+    if (isError) {
+        errors.push(imgData);
+        return;
+    }
+
+    if (!images[hash]) {
+        images[hash] = imgData;
+    }
+    else {
+        console.log(`found duplicate : ${hash}`);
+        images[hash].paths.push(fullPath)
+    }
+
+    //up some of the metadata directly in the imgData
+    const metaDataToReport = ['model', 'sampler', 'prompt'];
+    for (let metadata of imgData.generationMetadata) {
+        if (metaDataToReport.indexOf(metadata.key) >= 0) {
+            imgData[metadata.key] = metadata.val;
+        }
+    }
+    imgData.mtime = imgData.stats.mtime;
+    imgData.ctime = imgData.stats.ctime;
+
+
+    //insert into database
+    const {Image} = await yaaiisDatabase.get();
+    await Image.upsert(imgData);
+}
+
 const scrap = async (folderPath) => {
     const files = await fs.readdir(folderPath);
 
@@ -74,71 +132,9 @@ const scrap = async (folderPath) => {
     for (const file of files) {
         const fullPath = path.join(folderPath, file);
 
-        if (!file.endsWith('png'))  {
-            console.log(`${++i}/${files.length} not a png`);
-            continue;
-        }
-
-        const buff = await fs.readFile(fullPath);
-        const hash = createHash("sha256").update(buff).digest("hex");
-
-        console.log(`${++i}/${files.length} hash:${hash}`);
-
-        let isError = false;
-        let parsed;
-        try {
-            parsed = _parse(fullPath, hash);
-        } catch (e) {
-            console.log(e);
-            parsed = {key:"error", val:"no metadata"};
-            isError = true;
-        }
-
-        const stats = await fs.stat(fullPath);
-
-        const imgData = {
-            generationMetadata:parsed,
-            paths:[fullPath],
-            hash:hash,
-            stats:stats
-        };
-
-        if (isError) {
-            errors.push(imgData);
-            continue;
-        }
-
-        if (!images[hash]) {
-            images[hash] = imgData;
-        }
-        else {
-            console.log(`found duplicate : ${hash}`);
-            images[hash].paths.push(fullPath)
-        }
-
-        //up some of the metadata directly in the imgData
-        const metaDataToReport = ['model', 'sampler', 'prompt'];
-        for (let metadata of imgData.generationMetadata) {
-            if (metaDataToReport.indexOf(metadata.key) >= 0) {
-                imgData[metadata.key] = metadata.val;
-            }
-        }
-        imgData.mtime = imgData.stats.mtime;
-        imgData.ctime = imgData.stats.ctime;
-
-
-        //insert into database
-        const {Image} = await yaaiisDatabase.get();
-        await Image.upsert(imgData);
+        await scrapFile(fullPath);
 
     }
-}
-
-function addToRepository(model2img, val, img) {
-    if (!model2img[val]) {
-        model2img[val] = [];
-    }
-    model2img[val].push(img);
 }
 
 //TODO remove this and use database
@@ -156,10 +152,16 @@ function loadInMemory(_images) {
     }
 }
 
+const foldersPath = [
+    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images",
+    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images",
+    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves"
+]
+
 const refresh = async () => {
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images");
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images");
-    await scrap("D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves");
+    for (let folder of foldersPath) {
+        await scrap(folder);
+    }
 
     const imagesFlatten = Object.values(images);
     loadInMemory(imagesFlatten);
@@ -178,6 +180,16 @@ const init = async () => {
         const _images = await Image.findAll();
         loadInMemory(_images);
     }
+
+    for (let folder of foldersPath) {
+        chokidar.watch(folder).on('all', (event, path) => {
+            console.log(event, path);
+            if (event === 'add') {
+                scrapFile(path);
+            }
+        });
+    }
+
 }
 init();
 
