@@ -38,7 +38,7 @@ function YaaiisTabHeader(props) {
             <Button className={getPinButtonClassName()} title="Pin tab" onClick={() => togglePinTab(hash)}>
                 <FontAwesomeIcon icon={faMapPin} />
             </Button>
-            <div className="tab-title-text" onMouseEnter={() => setShowHover(true)}>{hash.substring(0,8)}</div>
+            <div className="tab-title-text" onMouseEnter={() => setShowHover(true)}>{hash.substring(0,10)}</div>
             <Button className="tabButton tabButtonClose" onClick={(e) => closeImg(hash,e)}>
                 <FontAwesomeIcon icon={faXmark} />
             </Button>
