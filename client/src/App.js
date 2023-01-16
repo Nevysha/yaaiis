@@ -39,45 +39,6 @@ function App() {
 
     const eventBus = new EventEmitter();
 
-    const load = async () => {
-        const response = await fetch("http://localhost:6969/img/data/all");
-        const reader = response.body.getReader();
-
-        let blob = await new Response(await new ReadableStream({
-            start(controller) {
-                return pump();
-                function pump() {
-                    return reader.read().then(({ done, value }) => {
-                        // When no more data needs to be consumed, close the stream
-                        if (done) {
-                            controller.close();
-                            return;
-                        }
-                        // Enqueue the next data chunk into our target stream
-                        controller.enqueue(value);
-                        return pump();
-                    });
-                }
-            }
-        })).blob();
-        let blobJson = JSON.parse(await blob.text());
-        setAll(blobJson);
-
-
-        const fetchModels = await fetch("http://localhost:6969/img/filter/model");
-        setModelFilter(
-            JSON.parse(await fetchModels.text())
-        );
-
-        const fetchSampler = await fetch("http://localhost:6969/img/filter/sampler");
-        setSamplerFilter(
-            JSON.parse(await fetchSampler.text())
-        );
-
-
-        setCheatRender(uniqid());
-    }
-
     const filter = async () => {
 
         const data = {};
@@ -97,7 +58,28 @@ function App() {
 
 
         );
-        setAll(JSON.parse(await fetched.text()));
+
+        const reader = fetched.body.getReader();
+
+        let blob = await new Response(await new ReadableStream({
+            start(controller) {
+                return pump();
+                function pump() {
+                    return reader.read().then(({ done, value }) => {
+                        // When no more data needs to be consumed, close the stream
+                        if (done) {
+                            controller.close();
+                            return;
+                        }
+                        // Enqueue the next data chunk into our target stream
+                        controller.enqueue(value);
+                        return pump();
+                    });
+                }
+            }
+        })).blob();
+
+        setAll(JSON.parse(await blob.text()));
 
     }
 
@@ -120,10 +102,6 @@ function App() {
     const loadModel2Img = async (e) => {
         await _genericSuggestBoxLoad('model',e.query, setModelFilter);
     }
-
-    useEffect(() => {
-        load();
-    }, []);
 
     useEffect(() => {
         filter();

@@ -80,7 +80,10 @@ app.post('/img/query', async (req, res) => {
 
         const {Image} = await yaaiisDatabase.get();
         const images = await Image.findAll({
-            where: where
+            where: where,
+            order: [
+                ['mtime', 'DESC'],
+            ]
         });
 
         const map = images.reduce(function(map, obj) {

@@ -125,6 +125,8 @@ const scrap = async (folderPath) => {
                 imgData[metadata.key] = metadata.val;
             }
         }
+        imgData.mtime = imgData.stats.mtime;
+        imgData.ctime = imgData.stats.ctime;
 
 
         //insert into database
