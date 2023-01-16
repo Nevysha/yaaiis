@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const { createHash } = require('crypto');
 const png = require('png-metadata');
 const {yaaiisDatabase} = require('./yaaiisDatabase');
+const {Op, Sequelize} = require("sequelize");
 
 let images = {}; //TODO create class to handle all file, manage duplicate etc
 let model2img = {};
@@ -205,16 +206,35 @@ const getImage = (hash) => {
     if (hash) return images[hash];
     return images;
 }
-const getPrompt2Img = () => {
-    return prompt2img
+
+const getFilterable = async (key) => {
+
+    const where = {};
+    where[key] = {[Op.not]:null};
+
+    const {Image} = await yaaiisDatabase.get();
+    const filterable = await Image.findAll({
+        attributes: [
+            [Sequelize.fn('DISTINCT', Sequelize.col(key)) ,key],
+        ],
+        where:where,
+        order: [
+            [key, 'ASC'],
+        ]
+    });
+    return filterable.map(f => f.dataValues[key]);
+}
+
+const getPrompts = async () => {
+    return await getFilterable('prompt');
 };
-const getSampler2img = () => {
-    return sampler2img
+const getSamplers = async () => {
+    return await getFilterable('sampler');
 };
-const getModel2img = () => {
-    return model2img
+const getModels = async () => {
+    return await getFilterable('model');
 };
-module.exports = {init: refresh, getImage, getPrompt2Img, getSampler2img, getModel2img}
+module.exports = {init: refresh, getImage, getPrompts, getSamplers, getModels}
 
 
 

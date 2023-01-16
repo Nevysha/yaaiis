@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {init, getImage, getPrompt2Img, getSampler2img, getModel2img} = require("./scrapper");
+const {init, getImage, getPrompts, getSamplers, getModels} = require("./scrapper");
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
@@ -34,13 +34,13 @@ app.get('/refresh', (req, res) => {
 app.get('/img/filter/:type', async (req, res) => {
     try {
         if (req.params.type === 'model') {
-            res.status(200).send(Object.keys(getModel2img()));
+            res.status(200).send(await getModels());
         }
         else if (req.params.type === 'sampler') {
-            res.status(200).send(Object.keys(getSampler2img()));
+            res.status(200).send(await getSamplers());
         }
         else if (req.params.type === 'prompt') {
-            res.status(200).send(Object.keys(getPrompt2Img()));
+            res.status(200).send(await getPrompts());
         }
 
     } catch (e) {
@@ -65,7 +65,6 @@ app.post('/img/query', async (req, res) => {
         const model = req.body.model ? req.body.model : [];
         const sampler = req.body.sampler ? req.body.sampler : [];
 
-        //TODO construct "prompt LIKE %$1% or prompt LIKE %$2%... clause
         const prompt = req.body.prompt ? req.body.prompt : [];
 
         const where = {[Op.and]:[]};
@@ -82,8 +81,6 @@ app.post('/img/query', async (req, res) => {
             }
             where[Op.and].push(or);
         }
-
-
 
         const {Image} = await yaaiisDatabase.get();
         const images = await Image.findAll({

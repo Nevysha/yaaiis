@@ -18,6 +18,8 @@ function ImgData(props) {
         return (<div/>)
     }
 
+    const filterable = ['model','sampler'];
+
     return (
         <div className="imgData">
             <span style={{display:"none"}}>{cheatRender}</span>
@@ -31,7 +33,12 @@ function ImgData(props) {
                                     {metadata.key}
                                 </div>
                             </td>
-                            <td>{metadata.val}</td>
+                            <td>
+                                {filterable.indexOf(metadata.key) < 0 && metadata.val}
+                                {filterable.indexOf(metadata.key) >= 0 && (
+                                    <button>{metadata.val}</button>
+                                )}
+                            </td>
                         </tr>
                     )
                 })}
