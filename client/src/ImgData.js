@@ -21,6 +21,31 @@ function ImgData(props) {
 
     const filterable = ['model','sampler'];
 
+    function transfer() {
+
+        document
+            .getElementById('automatic1111-iframe')
+            .contentWindow
+            .postMessage({
+                type: 'yaaiis/message',
+                data:imgData,
+                where:'txt2img'
+            }, 'http://127.0.0.1:7860')
+
+        // fetch(
+        //     "http://127.0.0.1:7860/sdapi/v1/txt2img",
+        //     {
+        //         method: 'POST',
+        //         mode:'no-cors',
+        //         headers:new Headers({
+        //             'Accept': 'application/json',
+        //             'Content-Type': 'application/json'
+        //         }),
+        //         body: JSON.stringify({prompt:imgData.prompt})
+        //     }
+        // );
+    }
+
     return (
         <div className="imgData" style={{right:marginRight}}>
             <span style={{display:"none"}}>{cheatRender}</span>
@@ -29,7 +54,6 @@ function ImgData(props) {
                     return (
                         <div key={metadata.key} className='imgData-row'>
 
-                            <div>
                                 <span className='imgData-row-label'>
                                     {metadata.key}
                                 </span>
@@ -39,21 +63,27 @@ function ImgData(props) {
                                         props._filterRef[metadata.key].set([metadata.val])
                                     }}>{metadata.val}</button>
                                 )}
-                            </div>
                         </div>
                     )
                 })}
 
                 <div key="path_1" className='imgData-row'>
-                    <div>
-                        <div className='imgData-row-label' style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
-                            Path
-                        </div>
+                    <div className='imgData-row-label' style={{fontWeight:'bold',color: '#c298d8',marginRight:'10px'}}>
+                        Path
                     </div>
-                    <td>{imgData.paths[0]}</td>
+                    <div>{imgData.paths[0]}</div>
                 </div>
             </div>
-
+            <div className="imgData-button-sendTo">
+                <button
+                    onClick={() => {
+                        transfer();
+                    }}>
+                    txt2img
+                </button>
+                <button>img2img</button>
+                <button>extras</button>
+            </div>
         </div>
     )
 }

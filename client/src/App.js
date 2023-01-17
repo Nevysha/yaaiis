@@ -55,6 +55,8 @@ function App() {
         let _all = [...getAll()];
         _all.unshift(data);
         setAll(_all);
+        eventBus.emit('selectImage', data);
+        eventBus.emit('selectTabImage', data);
     });
 
     const eventBus = new EventEmitter();
@@ -280,7 +282,7 @@ function App() {
 
                         <div style={{width:infoWidth+"px", height:'100%'}}>
                             <h4>Automatic1111</h4>
-                            <iframe style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
+                            <iframe id="automatic1111-iframe" style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
                         </div>
 
                     </Resizable>

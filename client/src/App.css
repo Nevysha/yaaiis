@@ -150,3 +150,17 @@ h4 {
     display: flex;
 }
 
+.imgData-row button {
+    background-color: var(--cyan-300);
+}
+
+button {
+    background-color: var(--indigo-200);
+    border:none;
+    color: var(--surface-ground);
+}
+
+.imgData-button-sendTo button{
+    margin-right: 2px;
+}
+
