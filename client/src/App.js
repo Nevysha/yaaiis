@@ -41,7 +41,7 @@ function App() {
     const [samplerFilter, setSamplerFilter] = useState([]);
     const [promptFilter, setPromptFilter] = useState([]);
     const [browserWidth, setBrowserWidth] = useState(440);
-    const [infoWidth, setInfoWidth] = useState(window.innerWidth/2);
+    const [infoWidth, setInfoWidth] = useState(0);
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
     const [cheatRender, setCheatRender] = useState(uniqid());
 
@@ -234,6 +234,19 @@ function App() {
         }
     }
 
+    const dragOverHandler = (ev) => {
+        console.log("dragOver");
+        ev.preventDefault();
+    }
+
+    const dropHandler = (ev) => {
+        console.log("Drop");
+        ev.preventDefault();
+        // Get the data, which is the id of the drop target
+        const data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+    }
+
     return (
         <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
             <span style={{display:"none"}}>{cheatRender}</span>
@@ -273,21 +286,25 @@ function App() {
                     </div>
                 </div>
 
-                <div style={{display: 'flex', flexDirection:'column'}}>
+                {/*<div style={{display: 'flex', flexDirection:'column'}}>*/}
 
-                    <Resizable width={infoWidth} id='browserSplitterPanel'
-                               style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}
-                               resizeHandles={['nw']}
-                               onResize={onFirstResizeInfo}>
+                {/*    <Resizable width={infoWidth} id='browserSplitterPanel'*/}
+                {/*               style={{display:'flex', flexDirection:'column', paddingRight:'10px'}}*/}
+                {/*               resizeHandles={['nw']}*/}
+                {/*               onResize={onFirstResizeInfo}>*/}
 
-                        <div style={{width:infoWidth+"px", height:'100%'}}>
-                            <h4>Automatic1111</h4>
-                            <iframe id="automatic1111-iframe" style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"/>
-                        </div>
+                {/*        <div style={{width:infoWidth+"px", height:'100%'}}*/}
+                {/*             onDrop={dropHandler}*/}
+                {/*             onDragOver={dragOverHandler}>*/}
+                {/*            <h4>Automatic1111</h4>*/}
+                {/*            <iframe*/}
+                {/*                id="automatic1111-iframe" style={{height: 'inherit', width: "inherit"}} src="http://127.0.0.1:7860"*/}
+                {/*                />*/}
+                {/*        </div>*/}
 
-                    </Resizable>
+                {/*    </Resizable>*/}
 
-                </div>
+                {/*</div>*/}
             </div>
         </div>
     );
