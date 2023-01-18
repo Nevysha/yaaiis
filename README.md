@@ -34,7 +34,7 @@ Installation process require you to manually write your output folder path in a 
 ## Installation
 **WINDOWS ONLY ATM**
 
-1. Go to the release page and download the zip. Extract it somewhere.
+1. Go to the [release](https://github.com/Nevysha/yaaiis/releases/tag/0.1.0-alpha) page and download the zip. Extract it somewhere.
 2. Start Automatic1111 webui (should be on default port)
 3. Inside the folder, open "preferences.js" and edit it to add your output folder path.
 4. run "start"
