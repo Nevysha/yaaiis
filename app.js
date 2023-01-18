@@ -12,10 +12,7 @@ const {yaaiisDatabase} = require('./yaaiisDatabase');
 const { Op } = require("sequelize");
 
 var app = express();
-app.use(cors({
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200
-}));
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
