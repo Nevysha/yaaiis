@@ -133,6 +133,7 @@ const scrap = async (folderPath) => {
 
     let i = 0;
     for (const file of files) {
+        console.log(`file ${++i} of ${files.length} for folder : ${folderPath}`)
         const fullPath = path.join(folderPath, file);
 
         await scrapFile(fullPath);

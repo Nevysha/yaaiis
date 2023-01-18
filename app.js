@@ -23,8 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.get('/refresh', (req, res) => {
-    init();
+app.get('/refresh', async (req, res) => {
+    await init();
     res.status(200).send();
 })
 

@@ -181,26 +181,6 @@ function App() {
 
     const items = [
         {
-            label:'Filter',
-            icon:'pi pi-fw pi-pencil',
-            items:[
-                {
-                    label:'With metadata',
-                },
-                {
-                    label:'No upscale',
-                },
-                {
-                    label:'Model',
-                    items: [
-                        {label: 'ModelA'},
-                        {label: 'ModelB'}
-                    ]
-                },
-
-            ]
-        },
-        {
             template: (item, options) => {
                 return getAutoCompleteElement('Model', filterModelValue, modelFilter, loadModel2Img, (e) => setFilterModelValue(e.value));
             }
@@ -219,7 +199,10 @@ function App() {
         {
             label:'Refresh',
             icon:'pi pi-fw pi-refresh',
-            command:() => fetch('http://localhost:6969/refresh')
+            command: async () => {
+                await fetch('http://localhost:6969/refresh')
+                filter();
+            }
         }
     ];
 
