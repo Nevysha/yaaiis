@@ -30,7 +30,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 2420,
         height: 1080,
-        title: "Yaaiis workspace"
+        title: "Yaaiis!"
     });
 
     mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);
