@@ -8,6 +8,9 @@ I use SD a lot and my output folder are packed. In my workflow, I often need to 
 
 The goal of this app is to make image browsing more fluid while generating them, and generation parameter easy to find. 
 
+![](https://github.com/Nevysha/yaaiis/blob/master/demo1.png?raw=true)
+![](https://github.com/Nevysha/yaaiis/blob/master/demo2.png?raw=true)
+
 **Note** : 
 *This is not a fork, Automatic1111 web-ui is not included and should be installed and run independently. This app only include a view of the webpage, and an interface to send data to it.*
 
