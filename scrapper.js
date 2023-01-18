@@ -155,11 +155,7 @@ function loadInMemory(_images) {
     }
 }
 
-const foldersPath = [
-    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\txt2img-images",
-    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\img2img-images",
-    "D:\\stable-diffusion\\A1111 Web UI Autoinstaller\\stable-diffusion-webui\\outputs\\saves"
-]
+const foldersPath = require('./preferences').foldersPath;
 
 const refresh = async () => {
     for (let folder of foldersPath) {

@@ -30,6 +30,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 2420,
         height: 1080,
+        title: "Yaaiis workspace"
     });
 
     mainWindow.loadFile(`electron-index.html`);
