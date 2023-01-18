@@ -33,7 +33,7 @@ function createWindow() {
         title: "Yaaiis workspace"
     });
 
-    mainWindow.loadFile(`electron-index.html`);
+    mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);
     mainWindow.on('page-title-updated', function (e) {
         e.preventDefault()
 
@@ -71,7 +71,11 @@ function createWindow() {
             setAutomatic1111Bounds();
         })
 
-        viewYaaiis.webContents.loadURL('http://localhost:3000');
+        const yaaiisURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
+        console.log(yaaiisURL);
+        viewYaaiis.webContents.loadURL(
+            yaaiisURL
+        );
         viewAutomatic1111.webContents.loadURL('http://localhost:7860');
 
         mainWindow.on('closed', function () {
@@ -80,7 +84,7 @@ function createWindow() {
         mainWindow.on('page-title-updated', function (e) {
             e.preventDefault()
         });
-    });
+    },1000);
 
 
 }
