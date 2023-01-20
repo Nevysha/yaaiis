@@ -195,9 +195,45 @@ const init = async () => {
             console.log(event, path);
             if (event === 'add') {
                 const imgData = await scrapFile(path);
-                if (imgData) {
-                    socket.emit('newImage', imgData);
+
+                const {Image, Tag, ImageTag} = await yaaiisDatabase.get();
+
+                try {
+                    let img = await Image.findByPk(
+                        imgData.hash,
+                        {
+                            include: Tag
+                        });
+
+                    let tags = await img.getTags();
+
+                    //TODO set tag on image
+                    for (let autoTag of autoTags) {
+                        if (tags.indexOf(autoTag) < 0) {
+                            let tag = await Tag.findOne(
+                                { where: { name:autoTag } }
+                            );
+
+                            if (!tag) {
+                                await Tag.create({name:autoTag});
+                            }
+
+                            tag = await Tag.findOne(
+                                { where: { name:autoTag } }
+                            );
+
+                            img.addTag(tag);
+                        }
+                    }
+
+                    if (imgData) {
+                        socket.emit('newImage', imgData);
+                    }
                 }
+                catch (e) {
+                    console.error(e);
+                }
+
             }
         });
 
@@ -249,11 +285,16 @@ const getTags = async () => {
 
     const tagWithNegative = [];
     for (let tag of filterable) {
-        tagWithNegative.push(tag);
-        tagWithNegative.push(`!${tag}`);
+        tagWithNegative.push(tag.dataValues.name);
+        tagWithNegative.push(`!${tag.dataValues.name}`);
     }
 
     return tagWithNegative;
+}
+
+let autoTags = [];
+const setAutoTags = (_autoTag) => {
+    autoTags = _autoTag;
 }
 
 let socket;
@@ -261,7 +302,7 @@ const setSocket = (_socket) => {
     socket = _socket;
 }
 
-module.exports = {init, refresh, getImage, getPrompts, getSamplers, getTags, getModels, setSocket}
+module.exports = {init, setAutoTags, refresh, getImage, getPrompts, getSamplers, getTags, getModels, setSocket}
 
 
 

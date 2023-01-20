@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {refresh, getImage, getPrompts, getSamplers, getModels, getTags, setSocket} = require("./scrapper");
+const {refresh, getImage, getPrompts, getSamplers, getModels, getTags, setSocket, setAutoTags} = require("./scrapper");
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
@@ -47,6 +47,15 @@ app.get('/img/filter/:type', async (req, res) => {
         res.status(500).send(e);
     }
 
+});
+
+app.get('/autotag/:value', async (req, res) => {
+    if (req.params.value !== '') {
+        setAutoTags(req.params.value.split(',').map(_tag => _tag.trim()));
+    }
+    else {
+        setAutoTags([]);
+    }
 });
 
 app.get('/img/data/all', async (req, res) => {

@@ -47,6 +47,8 @@ function App() {
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
     const [cheatRender, setCheatRender] = useState(uniqid());
 
+    const [autoTag, setAutoTag] = useState('');
+
     const getAll = () => {
         return all;
     }
@@ -210,6 +212,11 @@ function App() {
         }
     }
 
+    const applyAutoTag = async (value) => {
+        setAutoTag(value);
+        await fetch(`http://localhost:6969/autotag/${value}`);
+    }
+
     const dragOverHandler = (ev) => {
         console.log("dragOver");
         ev.preventDefault();
@@ -261,8 +268,7 @@ function App() {
                     <div className="p-inputgroup" style={{marginTop:'5px',width:'400px'}}>
                         <span className="p-inputgroup-addon">Auto tag</span>
 
-                        <AutoComplete aria-label="Prompts"
-                                      dropdownAriaLabel="Select Prompts"/>
+                        <InputText  value={autoTag} onChange={(e) => applyAutoTag(e.target.value)}/>
 
 
                     </div>

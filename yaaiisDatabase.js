@@ -17,7 +17,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 const Image = sequelize.define('Image',
     {
         hash: {
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
             primaryKey: true
         },
         model: DataTypes.TEXT,
@@ -45,9 +45,22 @@ const Tag = sequelize.define('Tag',
         },
     });
 
-Tag.belongsToMany(Image, {through:'ImageTag'})
+const ImageTag = sequelize.define('ImageTag',
+    {
+        uuid: {
+            type: DataTypes.UUID,
+            primaryKey: true
+        },
+        hash: {
+            type: DataTypes.TEXT,
+            primaryKey: true
+        },
+    });
 
-const models = {Image, Tag};
+Tag.belongsToMany(Image, {through:'ImageTag', foreignKey: "hash",})
+Image.belongsToMany(Tag, { through: 'ImageTag', foreignKey: "uuid", });
+
+const models = {Image, Tag, ImageTag};
 
 
 let _me;
@@ -56,12 +69,18 @@ const yaaiisDatabase = {
     get : async () => {
         if (_me) return _me;
 
-        await Image.sync();
-        await Tag.sync();
+        try {
+            await Image.sync();
+            await Tag.sync();
+            await sequelize.sync();
 
-        _me = models;
-        _me.get = this.get;
-        return _me;
+            _me = models;
+            _me.get = this.get;
+            return _me;
+        } catch (e) {
+            console.error(e);
+        }
+
     }
 }
 
