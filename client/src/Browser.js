@@ -1,17 +1,37 @@
-import {useRef} from "react";
+import {useEffect, useState} from "react";
+
+function ImgThumbnail(props) {
+
+    const [isSelected, setIsSelected] = useState(props.isSelected);
+
+    useEffect(() => {
+        setIsSelected(props.isSelected);
+    }, [props.isSelected])
+
+    return <img
+        key={props.imgData.hash}
+        className={isSelected ? "img-selected" : ""}
+        loading="lazy"
+        draggable="true"
+        onDragStart={props.onDragStart}
+
+        onClick={props.onClick}
+        width="100"
+        src={`http://localhost:6969/img/${props.imgData.hash}`} alt={props.imgData.hash}/>;
+}
 
 function Browser(props) {
 
     const all = props.all;
     const eventBus = props.eventBus;
 
-    const selected = useRef(null);
+    const [selected, setSelected] = useState({});
 
     eventBus.removeAllListeners('move');
     eventBus.on('move', (direction) => {
-        if (selected.current == null) return;
+        if (selected == null) return;
 
-        let index = all.map((item) => {return item.hash}).indexOf(selected.current.hash);
+        let index = all.map((item) => {return item.hash}).indexOf(selected.hash);
 
         if (direction === 'left' && index > 0) {
             index--;
@@ -25,31 +45,30 @@ function Browser(props) {
 
     const select = (imgData) => {
 
-        selected.current = imgData;
+        setSelected(imgData);
 
         //send to viewer
-        eventBus.emit('selectImage', selected.current);
-        eventBus.emit('selectTabImage', selected.current);
+        eventBus.emit('selectImage', imgData);
+        eventBus.emit('selectTabImage', imgData);
     }
 
     return (
         <div style={{overflowY:'scroll'}}>
             {all.map((imgData) => {
-                return (<img
-                            loading="lazy"
-                            draggable="true"
-                            onDragStart={(e) => {
-                                 console.log("onDragStart");
-                                 e.dataTransfer.setData("text/plain", `img_${imgData.hash}`);
-                                 const imgElement = new Image();
-                                 imgElement.src = `http://localhost:6969/img/${imgData.hash}`
-                                 e.dataTransfer.setDragImage(
-                                     imgElement, 10, 10)
-                            }}
-                            key={imgData.hash}
-                            onClick={() => select(imgData)}
-                            width="100"
-                            src={`http://localhost:6969/img/${imgData.hash}`} alt={imgData.hash}/>)
+                return (
+                    <ImgThumbnail
+                        key={imgData.hash}
+                        isSelected={selected.hash === imgData.hash}
+                        imgData={imgData}
+                        onDragStart={(e) => {
+                            console.log("onDragStart");
+                            e.dataTransfer.setData("text/plain", `img_${imgData.hash}`);
+                            const imgElement = new Image();
+                            imgElement.src = `http://localhost:6969/img/${imgData.hash}`
+                            e.dataTransfer.setDragImage(
+                                imgElement, 10, 10)
+                        }}
+                        onClick={() => select(imgData)}/>)
             })}
         </div>
     )

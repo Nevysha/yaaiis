@@ -164,3 +164,7 @@ button {
     margin-right: 2px;
 }
 
+.img-selected {
+    border: 4px solid deeppink;
+}
+
