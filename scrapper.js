@@ -203,9 +203,12 @@ const init = async () => {
 
 }
 
-const getImage = (hash) => {
-    if (hash) return images[hash];
-    return images;
+const getImage = async (hash) => {
+    const {Image} = await yaaiisDatabase.get();
+    if (hash) {
+        return await Image.findByPk(hash);
+    }
+    return await Image.findAll();
 }
 
 const getFilterable = async (key) => {

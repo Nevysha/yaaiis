@@ -113,7 +113,7 @@ app.get('/img/data/:hash', async (req, res) => {
 });
 app.get('/img/:hash', async (req, res) => {
     try {
-        const imgData = getImage(req.params.hash);
+        const imgData = await getImage(req.params.hash);
         res.sendFile(imgData.paths[0]);
     } catch (e) {
         res.status(500).send(e);
