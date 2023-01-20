@@ -235,13 +235,30 @@ const getSamplers = async () => {
 const getModels = async () => {
     return await getFilterable('model');
 };
+const getTags = async () => {
+
+    const {Tag} = await yaaiisDatabase.get();
+    const filterable = await Tag.findAll({
+        order: [
+            ['name', 'ASC'],
+        ]
+    });
+
+    const tagWithNegative = [];
+    for (let tag of filterable) {
+        tagWithNegative.push(tag);
+        tagWithNegative.push(`!${tag}`);
+    }
+
+    return tagWithNegative;
+}
 
 let socket;
 const setSocket = (_socket) => {
     socket = _socket;
 }
 
-module.exports = {init, refresh, getImage, getPrompts, getSamplers, getModels, setSocket}
+module.exports = {init, refresh, getImage, getPrompts, getSamplers, getTags, getModels, setSocket}
 
 
 

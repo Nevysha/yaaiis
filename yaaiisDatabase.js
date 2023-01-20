@@ -31,7 +31,23 @@ const Image = sequelize.define('Image',
         stats:  DataTypes.JSON,
     });
 
-const models = {Image};
+const Tag = sequelize.define('Tag',
+    {
+        uuid: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
+        },
+        name: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            unique: true
+        },
+    });
+
+Tag.belongsToMany(Image, {through:'ImageTag'})
+
+const models = {Image, Tag};
 
 
 let _me;
@@ -41,6 +57,7 @@ const yaaiisDatabase = {
         if (_me) return _me;
 
         await Image.sync();
+        await Tag.sync();
 
         _me = models;
         _me.get = this.get;

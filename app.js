@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {refresh, getImage, getPrompts, getSamplers, getModels, setSocket} = require("./scrapper");
+const {refresh, getImage, getPrompts, getSamplers, getModels, getTags, setSocket} = require("./scrapper");
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
@@ -38,6 +38,9 @@ app.get('/img/filter/:type', async (req, res) => {
         }
         else if (req.params.type === 'prompt') {
             res.status(200).send(await getPrompts());
+        }
+        else if (req.params.type === 'tag') {
+            res.status(200).send(await getTags());
         }
 
     } catch (e) {

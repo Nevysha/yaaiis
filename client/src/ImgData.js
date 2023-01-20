@@ -1,12 +1,16 @@
 import {useState} from "react";
 import uniqid from "uniqid";
+import {AutoComplete} from "primereact/autocomplete";
 
 function ImgData(props) {
 
     const eventBus = props.eventBus;
-    const marginRight = props.marginRight
+    const marginRight = props.marginRight;
+    const completeTags = props.completeTags;
 
     const [imgData, setImgData] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [tagsFilter, setTagsFilter] = useState([]);
     const [cheatRender, setCheatRender] = useState(uniqid());
 
     eventBus.removeAllListeners('selectTabImage');
@@ -83,6 +87,15 @@ function ImgData(props) {
                 </button>
                 <button>img2img</button>
                 <button>extras</button>
+            </div>
+            <div className="p-inputgroup" style={{marginTop:'5px'}}>
+                <span className="p-inputgroup-addon">Tags</span>
+
+                <AutoComplete value={tags} suggestions={tagsFilter} completeMethod={completeTags}
+                              multiple onChange={(e) => setTags(e.value)} aria-label="Prompts"
+                              dropdownAriaLabel="Select Prompts"/>
+
+
             </div>
         </div>
     )

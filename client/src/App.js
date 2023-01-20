@@ -36,11 +36,13 @@ function App() {
     const [filterPromptValue, setFilterPromptValue] = useState([]);
     const [filterModelValue, setFilterModelValue] = useState([]);
     const [filterSamplerValue, setFilterSamplerValue] = useState([]);
+    const [filterTagValue, setFilterTagValue] = useState([]);
 
     const [all, setAll] = useState([]);
     const [modelFilter, setModelFilter] = useState([]);
     const [samplerFilter, setSamplerFilter] = useState([]);
     const [promptFilter, setPromptFilter] = useState([]);
+    const [tagFilter, setTagFilter] = useState([]);
     const [browserWidth, setBrowserWidth] = useState(440);
     const [infoWidth, setInfoWidth] = useState(0);
     const [viewerWidth, setViewerWidth] = useState(window.innerWidth - (browserWidth + infoWidth));
@@ -65,6 +67,7 @@ function App() {
     const filter = async () => {
 
         const data = {};
+        if (filterModelValue !== "") data['tag'] = filterTagValue;
         if (filterModelValue !== "") data['model'] = filterModelValue;
         if (filterSamplerValue !== "") data['sampler'] = filterSamplerValue;
         if (filterPromptValue !== "") data['prompt'] = filterPromptValue;
@@ -122,6 +125,10 @@ function App() {
         await _genericSuggestBoxLoad('prompt',e.query, setPromptFilter);
     }
 
+    const loadTag2Img = async (e) => {
+        await _genericSuggestBoxLoad('tag',e.query, setTagFilter);
+    }
+
     const loadSampler2Img = async (e) => {
         await _genericSuggestBoxLoad('sampler',e.query, setSamplerFilter);
     }
@@ -135,6 +142,8 @@ function App() {
     }, [filterPromptValue, filterSamplerValue, filterModelValue]);
 
     useKeypress(['ArrowLeft', 'ArrowRight'], (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (event.key === 'ArrowLeft') {
             moveLeft();
         } else {
@@ -199,6 +208,11 @@ function App() {
     const items = [
         {
             template: (item, options) => {
+                return getAutoCompleteElement('Tag', filterTagValue, tagFilter, loadTag2Img, (e) => setFilterTagValue(e.value));
+            }
+        },
+        {
+            template: (item, options) => {
                 return getAutoCompleteElement('Model', filterModelValue, modelFilter, loadModel2Img, (e) => setFilterModelValue(e.value));
             }
         },
@@ -212,7 +226,6 @@ function App() {
                 return getAutoCompleteElement('Prompt', filterPromptValue, promptFilter, loadPrompt2Img, (e) => setFilterPromptValue(e.value));
             }
         },
-
         {
             label:'Refresh',
             icon:'pi pi-fw pi-refresh',
@@ -279,10 +292,18 @@ function App() {
                 </Resizable>
 
                 <div style={{display: 'flex', flexDirection:'column', flex:1, height:"100%", maxWidth:viewerWidth+'px', padding:"0 5px 0 5px"}}>
+                    <div className="p-inputgroup" style={{marginTop:'5px',width:'400px'}}>
+                        <span className="p-inputgroup-addon">Auto tag</span>
+
+                        <AutoComplete aria-label="Prompts"
+                                      dropdownAriaLabel="Select Prompts"/>
+
+
+                    </div>
                     <h4>Viewer</h4>
                     <div style={{display:'flex'}}>
                         <Viewer eventBus={eventBus}/>
-                        <ImgData eventBus={eventBus} _filterRef={_filterRef} marginRight={`${infoWidth+10}px`}/>
+                        <ImgData eventBus={eventBus} _filterRef={_filterRef} marginRight={`${infoWidth+10}px`} completeTags={loadTag2Img}/>
                     </div>
                 </div>
 

@@ -168,3 +168,15 @@ button {
     border: 4px solid deeppink;
 }
 
+.p-inputgroup .p-autocomplete button {
+    border-top: 1px solid #3f4b5b;
+    border-bottom: 1px solid #3f4b5b;
+    border-left:0;
+    margin-left: -1px;
+}
+
+.p-inputgroup .p-autocomplete .p-inputtext {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
