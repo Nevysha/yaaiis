@@ -67,6 +67,7 @@ function Browser(props) {
         }
         onResize();
 
+        window.removeEventListener('resize', onResize);
         window.addEventListener("resize", onResize);
 
     }, []);

@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const {init, getImage, getPrompts, getSamplers, getModels, setSocket} = require("./scrapper");
+const {refresh, getImage, getPrompts, getSamplers, getModels, setSocket} = require("./scrapper");
 const cors = require("cors");
 
 const {yaaiisDatabase} = require('./yaaiisDatabase');
@@ -24,7 +24,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.get('/refresh', async (req, res) => {
-    await init();
+    await refresh();
     res.status(200).send();
 })
 

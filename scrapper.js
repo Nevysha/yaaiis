@@ -239,7 +239,7 @@ const setSocket = (_socket) => {
     socket = _socket;
 }
 
-module.exports = {init: refresh, getImage, getPrompts, getSamplers, getModels, setSocket}
+module.exports = {init, refresh, getImage, getPrompts, getSamplers, getModels, setSocket}
 
 
 
