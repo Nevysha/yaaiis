@@ -195,7 +195,7 @@ function App() {
                     <span className="p-inputgroup-addon">{title}</span>
 
                         <AutoComplete value={value} suggestions={suggestion} completeMethod={completeMethod}
-                                      dropdown multiple onChange={onChange} aria-label="Prompts"
+                                      dropdown multiple forceSelection onChange={onChange} aria-label="Prompts"
                                       dropdownAriaLabel="Select Prompts"/>
 
 
