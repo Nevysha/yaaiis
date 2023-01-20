@@ -1,2 +1,5 @@
 # Project exclude paths
 /node_modules/
+/yaaiis-build/
+/yaaiis-database.sqlite
+/preferences.js
