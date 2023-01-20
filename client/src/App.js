@@ -17,6 +17,7 @@ import { Button } from 'primereact/button';
 import { Resizable } from 'react-resizable';
 import uniqid from "uniqid";
 import io from 'socket.io-client';
+import useKeypress from 'react-use-keypress';
 
 const socket = io('http://localhost:6968', {
     reconnectionDelay: 1000,
@@ -132,6 +133,22 @@ function App() {
     useEffect(() => {
         filter();
     }, [filterPromptValue, filterSamplerValue, filterModelValue]);
+
+    useKeypress(['ArrowLeft', 'ArrowRight'], (event) => {
+        if (event.key === 'ArrowLeft') {
+            moveLeft();
+        } else {
+            moveRight();
+        }
+    });
+
+    const moveLeft = () => {
+        eventBus.emit('move', 'left');
+    }
+
+    const moveRight = () => {
+        eventBus.emit('move', 'right');
+    }
 
 
     const onFirstResizeBrowser = (event, {element, size, handle}) => {

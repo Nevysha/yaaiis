@@ -1,11 +1,35 @@
+import {useRef} from "react";
+
 function Browser(props) {
 
     const all = props.all;
     const eventBus = props.eventBus;
 
-    const sendToViewer = (imgData) => {
-        eventBus.emit('selectImage', imgData);
-        eventBus.emit('selectTabImage', imgData);
+    const selected = useRef(null);
+
+    eventBus.removeAllListeners('move');
+    eventBus.on('move', (direction) => {
+        if (selected.current == null) return;
+
+        let index = all.map((item) => {return item.hash}).indexOf(selected.current.hash);
+
+        if (direction === 'left' && index > 0) {
+            index--;
+        }
+        else if (direction === 'right' && index < all.length-1) {
+            index++;
+        }
+
+        select(all[index]);
+    })
+
+    const select = (imgData) => {
+
+        selected.current = imgData;
+
+        //send to viewer
+        eventBus.emit('selectImage', selected.current);
+        eventBus.emit('selectTabImage', selected.current);
     }
 
     return (
@@ -23,7 +47,7 @@ function Browser(props) {
                                      imgElement, 10, 10)
                             }}
                             key={imgData.hash}
-                            onClick={() => sendToViewer(imgData)}
+                            onClick={() => select(imgData)}
                             width="100"
                             src={`http://localhost:6969/img/${imgData.hash}`} alt={imgData.hash}/>)
             })}
