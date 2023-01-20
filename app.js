@@ -76,9 +76,29 @@ app.post('/img/query', async (req, res) => {
 
         const prompt = req.body.prompt ? req.body.prompt : [];
 
+        const tag = req.body.tag ? req.body.tag : [];
+
         const where = {[Op.and]:[]};
         if (model.length >= 1) where[Op.and].push({model:model});
         if (sampler.length >= 1) where[Op.and].push({sampler:sampler});
+        if (tag.length > 0) {
+            const {Tag, ImageTag} = await yaaiisDatabase.get();
+            let _tags = (await Tag.findAll({
+                where: [{
+                    name:tag
+                }]
+            })).map(_modelTag => _modelTag.dataValues.uuid);
+
+            let _img = (await ImageTag.findAll({
+                where: [{
+                    uuid:_tags
+                }]
+            })).map(_imgHash => _imgHash.dataValues.hash);
+
+            if (_img && _img.length > 0) {
+                where[Op.and].push({hash:_img});
+            }
+        }
 
         if (prompt.length >= 1) {
             let or = {[Op.or]:[]}

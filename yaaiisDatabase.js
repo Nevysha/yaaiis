@@ -57,8 +57,8 @@ const ImageTag = sequelize.define('ImageTag',
         },
     });
 
-Tag.belongsToMany(Image, {through:'ImageTag', foreignKey: "hash",})
-Image.belongsToMany(Tag, { through: 'ImageTag', foreignKey: "uuid", });
+Tag.belongsToMany(Image, {through:'ImageTag', foreignKey: "uuid",})
+Image.belongsToMany(Tag, { through: 'ImageTag', foreignKey: "hash", });
 
 const models = {Image, Tag, ImageTag};
 

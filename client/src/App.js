@@ -140,7 +140,7 @@ function App() {
 
     useEffect(() => {
         filter();
-    }, [filterPromptValue, filterSamplerValue, filterModelValue]);
+    }, [filterPromptValue, filterSamplerValue, filterModelValue, filterTagValue]);
 
     useKeypress(['ArrowLeft', 'ArrowRight'], (event) => {
         event.preventDefault();
