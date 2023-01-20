@@ -194,8 +194,8 @@ function App() {
                 <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">{title}</span>
 
-                        <AutoComplete value={value} suggestions={suggestion} completeMethod={completeMethod}
-                                      dropdown multiple forceSelection onChange={onChange} aria-label="Prompts"
+                        <AutoComplete className="p-inputtext-sm block mb-2" value={value} suggestions={suggestion} completeMethod={completeMethod}
+                                      dropdown multiple onChange={onChange} aria-label="Prompts"
                                       dropdownAriaLabel="Select Prompts"/>
 
 
@@ -263,20 +263,23 @@ function App() {
     return (
         <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
             <span style={{display:"none"}}>{cheatRender}</span>
-            <Menubar
-                model={items}
-                start={
-                    <div className="menubar-right">
-                        <img src="./nevy-icon-1-256-round.png" width='40px'/>
-                        <div className="p-inputgroup">
-                                            <span className="p-inputgroup-addon">
-                                                <FontAwesomeIcon icon={faSearch}/>
-                                            </span>
-                            <InputText placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
-                        </div>
-                    </div>
-                }
-                end={<Button label="Help" icon="pi pi-question"/>}/>
+
+            <div className='yaaiis-menu'>
+                <img src="./nevy-icon-1-256-round.png" width='40px' height='40px'/>
+                <div className="p-inputgroup global-search">
+                    <span className="p-inputgroup-addon">
+                        <FontAwesomeIcon icon={faSearch}/>
+                    </span>
+                    <InputText className="p-inputtext-sm block mb-2" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
+                </div>
+                {getAutoCompleteElement('Tag', filterTagValue, tagFilter, loadTag2Img, (e) => setFilterTagValue(e.value))}
+                {getAutoCompleteElement('Model', filterModelValue, modelFilter, loadModel2Img, (e) => setFilterModelValue(e.value))}
+                {getAutoCompleteElement('Sampler', filterSamplerValue, samplerFilter, loadSampler2Img, (e) => setFilterSamplerValue(e.value))}
+                {getAutoCompleteElement('Prompt', filterPromptValue, promptFilter, loadPrompt2Img, (e) => setFilterPromptValue(e.value))}
+                <div style={{flex:'1'}}/>
+                <Button label="Help" icon="pi pi-question"/>
+            </div>
+
             <div style={{height: 'calc(100% - 65px)', display:'flex'}}>
 
                 <Resizable width={browserWidth} id='browserSplitterPanel'
@@ -300,6 +303,7 @@ function App() {
 
 
                     </div>
+
                     <h4>Viewer</h4>
                     <div style={{display:'flex'}}>
                         <Viewer eventBus={eventBus}/>

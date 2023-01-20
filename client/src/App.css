@@ -180,3 +180,29 @@ button {
     border-bottom-right-radius: 0 !important;
 }
 
+.yaaiis-menu {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    background-color: #3f4b5b;
+    gap: 10px;
+    align-items: center;
+    /*border-bottom: 2px solid var(--primary-color);*/
+    /*margin-bottom: 5px;*/
+}
+
+.p-inputgroup {
+    height: 30px;
+}
+.p-inputtext {
+    padding: 0 !important;
+}
+
+.p-autocomplete-token {
+    height: 25px;
+}
+
+.yaaiis-menu .global-search {
+    width: 300px;
+}
+
