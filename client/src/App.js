@@ -12,7 +12,6 @@ import Browser from "./Browser";
 import EventEmitter from "eventemitter3";
 import Viewer from "./Viewer";
 import ImgData from "./ImgData";
-import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { Resizable } from 'react-resizable';
 import uniqid from "uniqid";
@@ -165,11 +164,6 @@ function App() {
         setViewerWidth(window.innerWidth - (infoWidth + browserWidth));
     }
 
-    const onFirstResizeInfo = (event, {element, size, handle}) => {
-        setInfoWidth(size.width);
-        setViewerWidth(window.innerWidth - (infoWidth + browserWidth));
-    }
-
     const applySearch = () => {
         if (searchValue === "") return all;
 
@@ -204,37 +198,6 @@ function App() {
 
         );
     }
-
-    const items = [
-        {
-            template: (item, options) => {
-                return getAutoCompleteElement('Tag', filterTagValue, tagFilter, loadTag2Img, (e) => setFilterTagValue(e.value));
-            }
-        },
-        {
-            template: (item, options) => {
-                return getAutoCompleteElement('Model', filterModelValue, modelFilter, loadModel2Img, (e) => setFilterModelValue(e.value));
-            }
-        },
-        {
-            template: (item, options) => {
-                return getAutoCompleteElement('Sampler', filterSamplerValue, samplerFilter, loadSampler2Img, (e) => setFilterSamplerValue(e.value));
-            }
-        },
-        {
-            template: (item, options) => {
-                return getAutoCompleteElement('Prompt', filterPromptValue, promptFilter, loadPrompt2Img, (e) => setFilterPromptValue(e.value));
-            }
-        },
-        {
-            label:'Refresh',
-            icon:'pi pi-fw pi-refresh',
-            command: async () => {
-                await fetch('http://localhost:6969/refresh')
-                filter();
-            }
-        }
-    ];
 
     const _filterRef = {
         model:{
