@@ -240,9 +240,11 @@ const init = async () => {
 }
 
 const getImage = async (hash) => {
-    const {Image} = await yaaiisDatabase.get();
+    const {Image, Tag} = await yaaiisDatabase.get();
     if (hash) {
-        return await Image.findByPk(hash);
+        return await Image.findByPk(
+            hash,
+            {include:Tag});
     }
     return await Image.findAll();
 }

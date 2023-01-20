@@ -14,8 +14,14 @@ function ImgData(props) {
     const [cheatRender, setCheatRender] = useState(uniqid());
 
     eventBus.removeAllListeners('selectTabImage');
-    eventBus.on('selectTabImage', (_imgData) => {
+    eventBus.on('selectTabImage', async (_imgData) => {
+
+        let _loadImgData = await fetch(`http://localhost:6969/img/data/${_imgData.hash}`);
+        _loadImgData = await _loadImgData.text();
+        let _loadImgDataJson = JSON.parse(_loadImgData);
+
         setImgData(_imgData);
+        setTags(_loadImgDataJson.Tags.map(_tag => _tag.name))
         setCheatRender(uniqid());
     })
 

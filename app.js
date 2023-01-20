@@ -133,8 +133,8 @@ app.post('/img/query', async (req, res) => {
 
 app.get('/img/data/:hash', async (req, res) => {
     try {
-        const imgData = getImage(req.params.hash);
-        res.send(JSON.stringify(imgData));
+        const imgData = await getImage(req.params.hash);
+        res.status(200).send(imgData);
     } catch (e) {
         res.status(500).send(e);
     }
