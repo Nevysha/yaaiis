@@ -171,6 +171,7 @@ const refresh = async () => {
     return images;
 }
 
+let fSWatcher = null;
 const init = async () => {
     const {Image} = await yaaiisDatabase.get();
     if ((await Image.count()) <= 0) {
@@ -181,25 +182,26 @@ const init = async () => {
         loadInMemory(_images);
     }
 
-    for (let folder of foldersPath) {
-        chokidar
-            .watch(
-                folder,
-                {ignoreInitial: true}
-                )
-            .on('all', async (event, path) => {
-                console.log(event, path);
-                if (event === 'add') {
-                    const imgData = await scrapFile(path);
-                    if (imgData) {
-                        socket.emit('newImage', imgData);
-                    }
-                }
-            });
+    if (fSWatcher) {
+        fSWatcher.unwatch(foldersPath);
     }
 
+    fSWatcher = chokidar
+        .watch(
+            foldersPath,
+            {ignoreInitial: true}
+        )
+        .on('all', async (event, path) => {
+            console.log(event, path);
+            if (event === 'add') {
+                const imgData = await scrapFile(path);
+                if (imgData) {
+                    socket.emit('newImage', imgData);
+                }
+            }
+        });
+
 }
-init();
 
 const getImage = (hash) => {
     if (hash) return images[hash];
