@@ -20,7 +20,8 @@ function ImgData(props) {
         _loadImgData = await _loadImgData.text();
         let _loadImgDataJson = JSON.parse(_loadImgData);
 
-        setImgData(_imgData);
+
+        setImgData(_loadImgDataJson);
         setTags(_loadImgDataJson.Tags.map(_tag => _tag.name))
         setCheatRender(uniqid());
     })
