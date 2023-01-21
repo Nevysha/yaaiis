@@ -213,6 +213,7 @@ function App() {
     }
 
     const applyAutoTag = async (value) => {
+        console.log(`applyAutoTag:${value}`)
         setAutoTag(value);
         await fetch(`http://localhost:6969/autotag/${value}`);
     }

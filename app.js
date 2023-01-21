@@ -50,6 +50,7 @@ app.get('/img/filter/:type', async (req, res) => {
 });
 
 app.get('/autotag/:value', async (req, res) => {
+    console.log(`applyAutoTag:${req.params.value}`)
     if (req.params.value !== '') {
         setAutoTags(req.params.value.split(',').map(_tag => _tag.trim()));
     }
