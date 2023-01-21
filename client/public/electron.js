@@ -81,9 +81,9 @@ async function createWindow() {
         mainWindow.addBrowserView(viewYaaiis);
         mainWindow.addBrowserView(viewAutomatic1111);
 
-        let devtools = new BrowserWindow();
-        viewYaaiis.webContents.setDevToolsWebContents(devtools.webContents)
-        viewYaaiis.webContents.openDevTools({ mode: 'detach' })
+        // let devtools = new BrowserWindow();
+        // viewYaaiis.webContents.setDevToolsWebContents(devtools.webContents)
+        // viewYaaiis.webContents.openDevTools({ mode: 'detach' })
 
         setYaaiisBounds();
         setAutomatic1111Bounds();
