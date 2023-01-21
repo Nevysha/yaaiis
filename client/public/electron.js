@@ -30,7 +30,10 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 2420,
         height: 1080,
-        title: "Yaaiis!"
+        title: "Yaaiis!",
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
     });
 
     mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);

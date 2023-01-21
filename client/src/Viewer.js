@@ -101,7 +101,7 @@ function Browser(props) {
             return (
                 <TabPanel header={getHeader(imgData)} key={hash} style={{height:'100%'}}>
                     <div style={{height:'100%'}}>
-                        <img style={{maxHeight: 'calc(100vh - 155px)', maxWidth: '100%'}} src={`http://localhost:6969/img/${hash}`}
+                        <img style={{maxHeight: 'calc(100vh - 155px)', maxWidth: '100%'}} draggable="true" src={`http://localhost:6969/img/${hash}`}
                              alt={hash}/>
                     </div>
                 </TabPanel>
