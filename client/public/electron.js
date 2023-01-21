@@ -50,9 +50,9 @@ async function createWindow() {
         titleBarOverlay : titleBarOverlay(),
     });
 
-    let devtools = new BrowserWindow();
-    mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
-    mainWindow.webContents.openDevTools({ mode: 'detach' })
+    // let devtools = new BrowserWindow();
+    // mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
+    // mainWindow.webContents.openDevTools({ mode: 'detach' })
 
     mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);
     mainWindow.loadURL(isDev ?
