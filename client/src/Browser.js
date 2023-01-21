@@ -61,7 +61,11 @@ function Browser(props) {
                         isSelected={selected.hash === imgData.hash}
                         imgData={imgData}
                         onDragStart={(e) => {
-                            console.log("onDragStart");
+                            console.log('electron dragndrop triggered?=>:'+window.electron);
+                            if (window.electron) {
+                                e.preventDefault()
+                                window.electron.startDrag(imgData.paths[0])
+                            }
                             e.dataTransfer.setData("text/plain", `img_${imgData.hash}`);
                             const imgElement = new Image();
                             imgElement.src = `http://localhost:6969/img/${imgData.hash}`
