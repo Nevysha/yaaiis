@@ -57,6 +57,7 @@ app.get('/autotag/:value', async (req, res) => {
     else {
         setAutoTags([]);
     }
+    res.status(200).send();
 });
 
 app.get('/img/data/all', async (req, res) => {

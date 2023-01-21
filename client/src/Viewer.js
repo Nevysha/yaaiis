@@ -18,16 +18,7 @@ function Browser(props) {
 
     eventBus.removeAllListeners('togglePinTab');
     eventBus.on('togglePinTab', (hash) => {
-        if (pinnedHash.indexOf(hash) <= 0) {
-            pinnedHash.push(hash);
-            return;
-        }
-        for (let index in pinnedHash) {
-            if (pinnedHash[index] === hash) {
-                pinnedHash.splice(Number(index), 1);
-            }
-        }
-
+        togglePinTab(hash);
     })
 
     eventBus.removeAllListeners('selectImageTab');
@@ -59,6 +50,18 @@ function Browser(props) {
         setCheatRender(uniqid());
     });
 
+    function togglePinTab(hash, forceUnpin) {
+        if (pinnedHash.indexOf(hash) <= 0 && !forceUnpin) {
+            pinnedHash.push(hash);
+            return;
+        }
+        for (let index in pinnedHash) {
+            if (pinnedHash[index] === hash) {
+                pinnedHash.splice(Number(index), 1);
+            }
+        }
+    }
+
     useEffect(() => {
 
         const onResize = () => {
@@ -74,6 +77,7 @@ function Browser(props) {
 
     const closeImg = (hash, e) => {
         e.stopPropagation();
+        togglePinTab(hash, true);
         const newSelectedImg = selectedImgs;
         const index = selectedImgs.map((item) => {return item.hash}).indexOf(hash)
         newSelectedImg.splice(index,1);
