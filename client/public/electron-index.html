@@ -7,12 +7,37 @@
 <style>
     body {
         background-color: #282c34;
+        -webkit-app-region: drag;
+        height: 32px;
+        padding: 0;
+        margin: 0;
+    }
+    .electron-app-title {
+        color: #c298d8;
+        font-size: 15px;
+        font-weight: bolder;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        position: fixed;
+        left: 38px;
+        top: 8px;
+    }
+    img {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        position: fixed;
+        left: 7px;
+        top: 4px;
     }
 </style>
 <script>
     console.log('electron-index.html loaded')
 </script>
 <body>
-
+    <img src="nevy-icon-1-256-round.png">
+    <div class="electron-app-title">
+        <span style="color: white">Y</span>aaiis<span style="color: white">!</span>
+    </div>
 </body>
 </html>

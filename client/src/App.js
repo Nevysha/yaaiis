@@ -186,7 +186,7 @@ function App() {
 
     function getAutoCompleteElement(title, value, suggestion, completeMethod, onChange) {
         return (
-            <div>
+            <div style={{'-webkit-app-region': 'no-drag'}}>
                 <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">{title}</span>
 
@@ -235,9 +235,9 @@ function App() {
         <div style={{height: '100vh', display:'flex', flexDirection:'column'}}>
             <span style={{display:"none"}}>{cheatRender}</span>
 
-            <div className='yaaiis-menu'>
-                <img src="./nevy-icon-1-256-round.png" width='40px' height='40px'/>
-                <div className="p-inputgroup global-search">
+            <div className='yaaiis-menu' style={window.electron ? {'-webkit-app-region': 'drag'} : {'-webkit-app-region': 'no-drag'}}>
+                <img src="./nevy-icon-1-256-round.png" width='40px' height='40px' style={window.electron ? {'display': 'none'} : {'-webkit-app-region': 'no-drag'}}/>
+                <div className="p-inputgroup global-search" style={{'-webkit-app-region': 'no-drag'}}>
                     <span className="p-inputgroup-addon">
                         <FontAwesomeIcon icon={faSearch}/>
                     </span>
@@ -248,7 +248,6 @@ function App() {
                 {getAutoCompleteElement('Sampler', filterSamplerValue, samplerFilter, loadSampler2Img, (e) => setFilterSamplerValue(e.value))}
                 {getAutoCompleteElement('Prompt', filterPromptValue, promptFilter, loadPrompt2Img, (e) => setFilterPromptValue(e.value))}
                 <div style={{flex:'1'}}/>
-                <Button label="Help" icon="pi pi-question"/>
             </div>
 
             <div style={{height: 'calc(100% - 65px)', display:'flex'}}>

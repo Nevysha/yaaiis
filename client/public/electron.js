@@ -3,6 +3,14 @@ const { app, BrowserWindow, BrowserView, ipcMain } = electron;
 const path = require('path');
 const isDev = require('electron-is-dev');
 
+const titleBarOverlay = (theme) => {
+    return {
+        color: "#282c34",
+        symbolColor: "white",
+        height: 20
+    }
+}
+
 let mainWindow;
 app.on('ready', createWindow);
 app.on('window-all-closed', function () {
@@ -38,11 +46,13 @@ async function createWindow() {
         width: 1920,
         height: 1080,
         title: "Yaaiis!",
+        titleBarStyle : "hidden",
+        titleBarOverlay : titleBarOverlay(),
     });
 
-    // let devtools = new BrowserWindow();
-    // mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
-    // mainWindow.webContents.openDevTools({ mode: 'detach' })
+    let devtools = new BrowserWindow();
+    mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
 
     mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);
     mainWindow.loadURL(isDev ?
@@ -63,7 +73,7 @@ async function createWindow() {
         function setYaaiisBounds() {
             viewYaaiis.setBounds({
                 x: 0,
-                y: 0,
+                y: 32,
                 width: calcYaaiis().width,
                 height: calcYaaiis().height
             });
@@ -72,7 +82,7 @@ async function createWindow() {
         function setAutomatic1111Bounds() {
             viewAutomatic1111.setBounds({
                 x: calcYaaiis().width,
-                y: 0,
+                y: 32,
                 width: calcAutomatic1111().width,
                 height: calcYaaiis().height
             });
