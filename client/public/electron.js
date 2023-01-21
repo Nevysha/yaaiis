@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, BrowserView } = electron;
+const { app, BrowserWindow, BrowserView, ipcMain } = electron;
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -16,6 +16,13 @@ app.on('activate', function () {
     }
 });
 
+ipcMain.on('ondragstart', (event, filePath) => {
+    event.sender.startDrag({
+        file: path.join(filePath),
+        icon: filePath,
+    })
+})
+
 const _RATIO = (3 / 5);
 function calcYaaiis() {
     const contentBounds = mainWindow.getContentBounds();
@@ -26,21 +33,31 @@ function calcAutomatic1111() {
     return {width:Math.round(contentBounds.width * (1 - _RATIO)) - 1,height:contentBounds.height};
 }
 
-function createWindow() {
+async function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 2420,
+        width: 1920,
         height: 1080,
         title: "Yaaiis!",
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-        },
     });
 
+    // let devtools = new BrowserWindow();
+    // mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
+    // mainWindow.webContents.openDevTools({ mode: 'detach' })
+
     mainWindow.loadURL(`file://${path.join(__dirname, '../build/electron-index.html')}`);
+    mainWindow.loadURL(isDev ?
+        `file://${path.join(__dirname, 'electron-index.html')}` :
+        `file://${path.join(__dirname, '../build/electron-index.html')}`);
+
     mainWindow.on('page-title-updated', function (e) {
         e.preventDefault()
 
-        const viewYaaiis = new BrowserView()
+        const viewYaaiis = new BrowserView({
+            webPreferences: {
+            nodeIntegration: true,
+                preload: path.join(__dirname, 'preload.js'),
+        }
+        });
         const viewAutomatic1111 = new BrowserView();
 
         function setYaaiisBounds() {
@@ -63,6 +80,10 @@ function createWindow() {
 
         mainWindow.addBrowserView(viewYaaiis);
         mainWindow.addBrowserView(viewAutomatic1111);
+
+        let devtools = new BrowserWindow();
+        viewYaaiis.webContents.setDevToolsWebContents(devtools.webContents)
+        viewYaaiis.webContents.openDevTools({ mode: 'detach' })
 
         setYaaiisBounds();
         setAutomatic1111Bounds();

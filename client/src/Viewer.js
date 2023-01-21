@@ -101,8 +101,18 @@ function Browser(props) {
             return (
                 <TabPanel header={getHeader(imgData)} key={hash} style={{height:'100%'}}>
                     <div style={{height:'100%'}}>
-                        <img style={{maxHeight: 'calc(100vh - 155px)', maxWidth: '100%'}} draggable="true" src={`http://localhost:6969/img/${hash}`}
-                             alt={hash}/>
+                        <img
+                            style={{maxHeight: 'calc(100vh - 155px)', maxWidth: '100%'}}
+                            draggable="true"
+                            onDragStart={(e) => {
+                                console.log('electron dragndrop triggered?=>:'+window.electron);
+                                if (window.electron) {
+                                    e.preventDefault()
+                                    window.electron.startDrag(imgData.paths[0])
+                                }
+                            }}
+                            src={`http://localhost:6969/img/${hash}`}
+                            alt={hash}/>
                     </div>
                 </TabPanel>
             )
